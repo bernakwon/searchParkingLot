@@ -10,17 +10,20 @@ spring:
   jpa : 
     hibernate:
         ddl-auto : update
-    show-sql: true
+    show-sql: false
     open-in-view: false
   thymeleaf:
      cache: true
      prefix: classpath:/static/
      suffix: .html
-
-
 logging:
   level:
     root: warn
     com.parfait.study.simplelogging.service.SomeService: info
 server:
   port: 7070
+open-api:
+  base-url: 'http://openapi.seoul.go.kr:8088'
+  key: '/496270515468796534334167537975'
+  type: '/json'
+  service-name: '/GetParkInfo'

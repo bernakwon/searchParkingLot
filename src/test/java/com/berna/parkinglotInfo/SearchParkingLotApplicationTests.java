@@ -1,4 +1,4 @@
-package com.berna.reservation;
+package com.berna.parkinglotInfo;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,7 +7,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class ReservationApplicationTests {
+public class SearchParkingLotApplicationTests {
 
 	@Test
 	public void contextLoads() {

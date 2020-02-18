@@ -16,7 +16,6 @@ public class CustomExceptionHandler {
 
 	@ExceptionHandler(Exception.class)
     public ErrorInfo handleException(Exception _ex,WebRequest _req) {
-			
 		ErrorInfo errorInfo =  new ErrorInfo(new Date(),_ex.getMessage(),_req.getDescription(false));
 		return errorInfo;
 		
