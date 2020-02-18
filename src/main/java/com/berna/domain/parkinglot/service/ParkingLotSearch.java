@@ -29,11 +29,17 @@ public class ParkingLotSearch {
     public Page<ParkingLotInfo> searchAllDataByPredicate(ParkingLotRequestParam parkingLotRequestParam){
         Pageable pageable = parkingLotRequestParam.getPageRequest();
 
-        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        BooleanBuilder predicate = new BooleanBuilder();
 
-      /*  if(nonNull(parkingLotRequestParam.getAddr()){
-            booleanBuilder.and()
-        }*/
-        return parkingLotInfoRepository.findAll(booleanBuilder,pageable);
+        if(nonNull(parkingLotRequestParam.getAddr())){
+         //   predicate.and()
+        }
+        if(nonNull(parkingLotRequestParam.getTel())){
+       //     predicate.and()
+        }
+        if(nonNull(parkingLotRequestParam.getParkingName())){
+          //  predicate.and()
+        }
+        return parkingLotInfoRepository.findAll(predicate,pageable);
     }
 }
