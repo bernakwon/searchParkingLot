@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.*;
+import java.util.stream.IntStream;
 
 /**
  * @author hrkwon
@@ -66,7 +67,7 @@ public class BatchService {
 
 
 	private List<Set<ParkingLotInfo>> getParkingLotInfoOpenAPI(){
-		int listTotCnt = 0;
+		int listTotCnt;
         List<Set<ParkingLotInfo>> resultParkingLotInfo = new ArrayList<>();
 		 ApiResult apiResult =  webClient.get().uri(baseUrl+key+type+serviceName+"/1/2")
 				      .accept(MediaType.APPLICATION_JSON_UTF8)
@@ -74,17 +75,17 @@ public class BatchService {
 
 		 listTotCnt =  apiResult.getGetParkInfo().getListTotalCount();
 
-		 for(int idx=0;idx<Math.round(listTotCnt/1000);idx++){
-			 int startIndex = 1000*idx+1;
-			 int endIndex = 1000*idx+1000;
-
-			 String apiUrl = baseUrl+key+type+serviceName+"/"+startIndex+"/"+endIndex;
-			 ApiResult result =  webClient.get().uri(apiUrl)
-					 .accept(MediaType.APPLICATION_JSON_UTF8)
-					 .retrieve().bodyToMono(ApiResult.class).block();
-			 resultParkingLotInfo.add(result.getGetParkInfo().getRow());
-
-		 }
+		IntStream.range(0, Math.round(listTotCnt / 1000)).forEach(idx -> {
+			int startIndex = 1000 * idx + 1;
+			int endIndex = 1000 * idx + 1000;
+			String apiUrl = baseUrl + key + type + serviceName + "/" + startIndex + "/" + endIndex;
+			ApiResult result = webClient.get().uri(apiUrl)
+					.accept(MediaType.APPLICATION_JSON_UTF8)
+					.retrieve().bodyToMono(ApiResult.class).block();
+			if(result != null) {
+				resultParkingLotInfo.add(result.getGetParkInfo().getRow());
+			}
+		});
 
 		return resultParkingLotInfo;
 	}
