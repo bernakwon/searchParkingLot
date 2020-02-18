@@ -1,4 +1,4 @@
-package com.berna.batch.domain;
+package com.berna.scheduler.domain;
 
 import com.berna.domain.parkinglot.domain.entity.ParkingLotInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -1,4 +1,4 @@
-package com.berna.batch.domain;
+package com.berna.scheduler.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
