@@ -1,20 +1,29 @@
 buildscript {
 	ext {
-		springBootVersion = '2.0.4.RELEASE'
+		springBootVersion = '2.1.5.RELEASE'
 	}
 	repositories {
 		mavenCentral()
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+
 	}
 }
-
+/*
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
-
+apply plugin: 'com.ewerk.gradle.plugins.querydsl'*/
+plugins {
+	id 'java'
+	id 'idea'
+	id 'org.springframework.boot' version '2.1.5.RELEASE'
+	id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'  // querydsl plugin
+	id 'io.franzbecker.gradle-lombok' version '1.14'
+	id "io.spring.dependency-management" version '1.0.6.RELEASE'
+}
 group = 'com.search.parkinglot'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
@@ -25,18 +34,55 @@ repositories {
 
 
 dependencies {
+
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile('org.springframework.boot:spring-boot-starter-thymeleaf')
 	compile('org.springframework.boot:spring-boot-starter-web')
+	compile('org.springframework.boot:spring-boot-starter-cache')
+
 	compile('org.projectlombok:lombok')
+	compile('com.querydsl:querydsl-jpa')
+	compile('com.querydsl:querydsl-apt')
+
+	compile ('io.springfox:springfox-swagger2:2.6.1')
+	compile ('io.springfox:springfox-swagger-ui:2.6.1')
 
 	compile('org.springframework.boot:spring-boot-starter-webflux')
 	compile('org.projectreactor:reactor-spring:1.0.1.RELEASE')
+	compile('org.projectreactor:reactor-spring:1.0.1.RELEASE')
 
-	// https://mvnrepository.com/artifact/org.codehaus.jackson/jackson-mapper-asl
 	compile('org.codehaus.jackson:jackson-mapper-asl:1.9.13')
+
+	compile('com.googlecode.json-simple:json-simple:1.1')
+
+
+	// Chinese Calendar
+	compile('com.ibm.icu:icu4j:62.1')
 
 	runtime('org.springframework.boot:spring-boot-devtools')
 	runtime('com.h2database:h2')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
+}
+def querydslSrcDir = 'src/main/generated'
+
+querydsl {
+	library = "com.querydsl:querydsl-apt"
+	jpa = true
+	querydslSourcesDir = querydslSrcDir
+}
+
+compileQuerydsl{
+	options.annotationProcessorPath = configurations.querydsl
+}
+
+configurations {
+	querydsl.extendsFrom compileClasspath
+}
+
+sourceSets {
+	main {
+		java {
+			srcDirs = ['src/main/java', querydslSrcDir]
+		}
+	}
 }

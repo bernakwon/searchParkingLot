@@ -1,21 +1,30 @@
 package com.berna.scheduler.service;
 
 
-import com.berna.global.error.exception.APIErrorException;
-import com.berna.scheduler.domain.CodeMessageInfo;
 import com.berna.domain.parkinglot.domain.entity.ParkingLotInfo;
-import com.berna.scheduler.domain.ApiResult;
+import com.berna.domain.parkinglot.domain.request.ParkingLotRequestParam;
 import com.berna.domain.parkinglot.repository.ParkingLotInfoRepository;
+import com.berna.global.error.exception.APIErrorException;
+import com.berna.scheduler.domain.ApiResult;
+import com.berna.scheduler.domain.CodeMessageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -27,8 +36,8 @@ import static java.util.Objects.nonNull;
  *
  */
 @Slf4j
-@RestController
-public class SchedulerService {
+@Service
+public class CacheService {
 
 	private final WebClient webClient;
 
@@ -46,39 +55,30 @@ public class SchedulerService {
 
 	private static final String SUCCESS_API_RESULT_CODE = "INFO-000";
 
-	@Autowired
-	ParkingLotInfoRepository parkingLotInfoRepository;
-
-	public SchedulerService(WebClient.Builder webClient) {
+	public CacheService(WebClient.Builder webClient) {
 		this.webClient = webClient.baseUrl(baseUrl)
 				.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE)
 				.build();
 	}
 
-
 	/**
 	 * @author hrkwon
-	 * @Description open api 를 통해 Database에 수집하는 Batch 메서드. Open api 정책을 따라 5분에 한번씩 실행됨
+	 * @Description open api 를 통해 메모리 캐시에 수집하는 메서드.
 	 *
 	 */
-	@Scheduled(fixedDelay = 30000)
-	public void apiDataSaveDataBase() {
-
-		Set<ParkingLotInfo> resultAllApiData = getParkingLotInfoOpenAPI();
-		parkingLotInfoRepository.saveAll(resultAllApiData);
-
-	}
-
-	public Set<ParkingLotInfo> getParkingLotInfoOpenAPI(){
+	@Cacheable(value="API_ALL_DATA")
+	@CacheEvict(value="API_ALL_DATA")
+	public List<ParkingLotInfo> getParkingLotInfoOpenAPI(){
 		int listTotCnt;
-		Set<ParkingLotInfo> resultParkingLotInfo = new HashSet<>();
-		// API Error 검사
-		List<CodeMessageInfo> codeMessageInfos = new ArrayList<>();
+       List<ParkingLotInfo> resultParkingLotInfo = new ArrayList<>();
+        // API Error 검사
+        List<CodeMessageInfo> codeMessageInfos = new ArrayList<>();
 
-		//get Total Count
-		ApiResult apiResult =  webClient.get().uri(baseUrl+key+type+serviceName+"/1/1")
-				.accept(MediaType.APPLICATION_JSON_UTF8)
+        //get Total Count
+		 ApiResult apiResult =  webClient.get().uri(baseUrl+key+type+serviceName+"/1/1")
+				      .accept(MediaType.APPLICATION_JSON_UTF8)
 				.retrieve().bodyToMono(ApiResult.class).block();
+
 
 		if(nonNull(apiResult)) {
 			codeMessageInfos.add(apiResult.getGetParkInfo().getResult()); //처리 결과 저장
@@ -115,4 +115,5 @@ public class SchedulerService {
 
 		return resultParkingLotInfo;
 	}
+
 }

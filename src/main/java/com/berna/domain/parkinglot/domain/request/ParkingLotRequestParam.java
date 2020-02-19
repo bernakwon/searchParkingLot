@@ -1,17 +1,16 @@
 package com.berna.domain.parkinglot.domain.request;
 
 
+import com.berna.global.common.object.PagingParam;
 import lombok.Getter;
-import org.springframework.data.domain.PageRequest;
 
 @Getter
-public class ParkingLotRequestParam {
-
-    PageRequest pageRequest;
+public class ParkingLotRequestParam extends PagingParam {
 
     String addr;
     String tel;
     String parkingName;
-
+    double myLat;
+    double myLng;
 
 }

@@ -1,18 +1,28 @@
 package com.berna.domain.parkinglot.domain.entity;
 
+import com.berna.global.common.util.DateUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
+import javafx.scene.input.DataFormat;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 
-@Table(name="PARKING_LOT_INFO")
+@Table(name = "PARKING_LOT_INFO")
 @Entity
-@Data
+@Getter
+@ToString
 @IdClass(ParkingLotInfoPK.class)
-public class ParkingLotInfo {
+public class ParkingLotInfo implements Comparable<ParkingLotInfo> {
 
 
     @Id
@@ -46,7 +56,7 @@ public class ParkingLotInfo {
 
     @Column(name = "CAPACITY") // 주차 면(주차 가능 차량 수)
     @JsonProperty("CAPACITY")
-    private String capacity;
+    private int capacity;
 
     @Column(name = "WEEKEND_END_TIME") // 주말 운영 종료시각(HHMM)
     @JsonProperty("WEEKEND_END_TIME")
@@ -122,7 +132,7 @@ public class ParkingLotInfo {
     @Id
     @Column(name = "LNG") // 주차장 위치 좌표 경도
     @JsonProperty("LNG")
-    private String lng;
+    private double lng;
 
     @Column(name = "FULLTIME_MONTHLY") // 월 정기권 금액
     @JsonProperty("FULLTIME_MONTHLY")
@@ -130,11 +140,11 @@ public class ParkingLotInfo {
 
     @Column(name = "CUR_PARKING") // 현재 주차중인 대수
     @JsonProperty("CUR_PARKING")
-    private String curParking;
+    private int curParking;
     @Id
     @Column(name = "LAT") // 주차장 위치 좌표 위도
     @JsonProperty("LAT")
-    private String lat;
+    private double lat;
 
     @Column(name = "HOLIDAY_BEGIN_TIME") // 공휴일 운영 시작시각(HHMM)
     @JsonProperty("HOLIDAY_BEGIN_TIME")
@@ -146,7 +156,7 @@ public class ParkingLotInfo {
 
     @Column(name = "TIME_RATE") // 기본 주차 시간(분 단위)
     @JsonProperty("TIME_RATE")
-    private String timeRate;
+    private float timeRate;
 
     @Column(name = "WEEKDAY_BEGIN_TIME") // 평일 운영 시작시각(HHMM)
     @JsonProperty("WEEKDAY_BEGIN_TIME")
@@ -154,7 +164,7 @@ public class ParkingLotInfo {
 
     @Column(name = "RATES") // 기본 주차 요금
     @JsonProperty("RATES")
-    private String rates;
+    private float rates;
 
     @Column(name = "NIGHT_FREE_OPEN_NM") // 야간무료개방여부명
     @JsonProperty("NIGHT_FREE_OPEN_NM")
@@ -189,6 +199,61 @@ public class ParkingLotInfo {
     private String syncTime;
 
     @CreationTimestamp
-    @Column(name= "SAVE_TIME")
-    private LocalDateTime saveTime;
+    @Column(name = "SAVE_TIME")
+    private LocalDateTime saveTime = LocalDateTime.now();
+
+    @Setter
+    private boolean currentCheck;
+
+    /*기본 정렬은 분 단위 당 에상요금 최소*/
+    //TODO 추가 요금에 대한 것을 해결하고 가야함
+    @Override
+    public int compareTo(ParkingLotInfo o) {
+        return (int) (this.getRates() / this.getTimeRate() - o.getRates() / o.getTimeRate());
+    }
+
+    /*현재 주차가능 여부 체크 */
+    public boolean isCurrentParkingCheck() {
+        //현재시간
+        LocalDate currentDate = LocalDate.now();
+        LocalTime currentTime = LocalTime.now();
+        int yyyy = currentDate.getYear();
+
+        // 주중/주말/공휴일 운영시간 체크
+        DayOfWeek dayOfWeek = currentDate.getDayOfWeek();
+        boolean weekendCheck = dayOfWeek.equals(DayOfWeek.SATURDAY) || dayOfWeek.equals(DayOfWeek.SUNDAY);
+        boolean holidayCheck = DateUtil.isHolidayCheck(currentDate);
+        boolean timeCheck = false;
+
+
+            if (!weekendCheck && !holidayCheck) {
+                LocalTime weekdayBeginTime = LocalTime.parse(this.weekdayBeginTime.substring(0, 2)+":"+this.weekdayBeginTime.substring(2,4));
+                if(!this.weekdayEndTime.equals("2400")) {
+                    LocalTime weekdayEndTime = LocalTime.parse(this.weekdayEndTime.substring(0, 2) + ":" + this.weekdayEndTime.substring(2, 4));
+                    timeCheck = currentTime.isAfter(weekdayBeginTime) && currentTime.isBefore(weekdayEndTime);
+                }else{
+                    timeCheck = currentTime.isAfter(weekdayBeginTime);
+                }
+            } else if (weekendCheck && !holidayCheck) {
+                LocalTime weekendBeginTime = LocalTime.parse(this.weekendBeginTime.substring(0, 2)+":"+this.weekendBeginTime.substring(2,4));
+                if(!this.weekendEndTime.equals("2400")) {
+                LocalTime weekendEndTime = LocalTime.parse(this.weekendEndTime.substring(0, 2)+":"+this.weekendEndTime.substring(2,4));
+                timeCheck = currentTime.isAfter(weekendBeginTime) && currentTime.isBefore(weekendEndTime);
+                }else{
+                    timeCheck = currentTime.isAfter(weekendBeginTime);
+                }
+            } else {
+
+                LocalTime holidayBeginTime =LocalTime.parse(this.holidayBeginTime.substring(0, 2)+":"+this.holidayBeginTime.substring(2,4));
+                if(!this.holidayEndTime.equals("2400")) {
+                    LocalTime holidayEndTime = LocalTime.parse(this.holidayEndTime.substring(0, 2) + ":" + this.holidayEndTime.substring(2, 4));
+                    timeCheck = currentTime.isAfter(holidayBeginTime) && currentTime.isBefore(holidayEndTime);
+                }else{
+                    timeCheck = currentTime.isAfter(holidayBeginTime);
+                }
+            }
+
+        //미연계중이 아니고 주차가능 대수가 0 이상(현재주차중인 대수는 고려하지 않음), 현재 운영시간인지 여부
+        return !this.queStatus.equals("0") && this.capacity > 0 && timeCheck;
+    }
 }

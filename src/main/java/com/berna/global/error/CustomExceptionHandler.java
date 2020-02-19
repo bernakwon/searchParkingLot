@@ -3,7 +3,8 @@ package com.berna.global.error;
 
 import java.util.Date;
 
-import com.berna.global.error.exception.ReservationReduplicationException;
+
+import com.berna.global.error.exception.APIErrorException;
 import com.berna.global.error.exception.TimeErrorException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -22,8 +23,8 @@ public class CustomExceptionHandler {
     }
 	
 
-	@ExceptionHandler(ReservationReduplicationException.class)
-    public ErrorInfo handleReservationReduplicationException(ReservationReduplicationException _ex,WebRequest _req) {
+	@ExceptionHandler(APIErrorException.class)
+    public ErrorInfo handleReservationReduplicationException(APIErrorException _ex,WebRequest _req) {
 			
 		ErrorInfo errorInfo =  new ErrorInfo(new Date(),_ex.getMessage(),_req.getDescription(false));
 		return errorInfo;

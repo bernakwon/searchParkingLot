@@ -10,13 +10,20 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 public class ParkingLotSearchController {
     @Autowired
     ParkingLotSearch parkingLotSearch;
 
-    @PostMapping("/seoul/parking/search")
-    public Page<ParkingLotInfo> searchAllData(@RequestBody ParkingLotRequestParam parkingLotRequestParam){
-        return parkingLotSearch.searchAllDataByPredicate(parkingLotRequestParam);
+    @PostMapping("/parking/database/search")
+    public Page<ParkingLotInfo> searchDbDataByPredicate(@RequestBody ParkingLotRequestParam parkingLotRequestParam){
+        return parkingLotSearch.searchDbDataByPredicate(parkingLotRequestParam);
+    }
+
+    @PostMapping("/parking/cache/search")
+    public List<ParkingLotInfo> searchCacheDataByPredicate(@RequestBody ParkingLotRequestParam parkingLotRequestParam){
+        return parkingLotSearch.searchCacheDataByPredicate(parkingLotRequestParam);
     }
 }
