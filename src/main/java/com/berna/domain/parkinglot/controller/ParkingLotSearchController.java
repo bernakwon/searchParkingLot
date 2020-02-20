@@ -2,6 +2,7 @@ package com.berna.domain.parkinglot.controller;
 
 import com.berna.domain.parkinglot.domain.entity.ParkingLotInfo;
 import com.berna.domain.parkinglot.domain.request.ParkingLotRequestParam;
+import com.berna.domain.parkinglot.domain.response.ParkingLotInfoListResponse;
 import com.berna.domain.parkinglot.service.ParkingLotSearch;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,14 +17,14 @@ import java.util.List;
 public class ParkingLotSearchController {
     @Autowired
     ParkingLotSearch parkingLotSearch;
-
-    @PostMapping("/parking/database/search")
-    public Page<ParkingLotInfo> searchDbDataByPredicate(@RequestBody ParkingLotRequestParam parkingLotRequestParam){
-        return parkingLotSearch.searchDbDataByPredicate(parkingLotRequestParam);
-    }
+//
+//    @PostMapping("/parking/database/search")
+//    public Page<ParkingLotInfo> searchDbDataByPredicate(@RequestBody ParkingLotRequestParam parkingLotRequestParam){
+//        return parkingLotSearch.searchDbDataByPredicate(parkingLotRequestParam);
+//    }
 
     @PostMapping("/parking/cache/search")
-    public List<ParkingLotInfo> searchCacheDataByPredicate(@RequestBody ParkingLotRequestParam parkingLotRequestParam){
+    public ParkingLotInfoListResponse searchCacheDataByPredicate(@RequestBody ParkingLotRequestParam parkingLotRequestParam){
         return parkingLotSearch.searchCacheDataByPredicate(parkingLotRequestParam);
     }
 }

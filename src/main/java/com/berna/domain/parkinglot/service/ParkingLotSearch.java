@@ -3,10 +3,11 @@ package com.berna.domain.parkinglot.service;
 import com.berna.domain.parkinglot.domain.entity.ParkingLotInfo;
 
 import com.berna.domain.parkinglot.domain.request.ParkingLotRequestParam;
+import com.berna.domain.parkinglot.domain.response.ParkingLotInfoListResponse;
 import com.berna.domain.parkinglot.repository.ParkingLotInfoRepository;
 import com.berna.global.common.util.CommonUtil;
 import com.berna.scheduler.service.CacheService;
-import com.querydsl.core.BooleanBuilder;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -27,10 +28,10 @@ public class ParkingLotSearch {
     @Autowired
     CacheService cacheService;
 
-    public Page<ParkingLotInfo> searchDbDataByPredicate(ParkingLotRequestParam parkingLotRequestParam) {
+/*    public Page<ParkingLotInfo> searchDbDataByPredicate(ParkingLotRequestParam parkingLotRequestParam) {
         Pageable pageable = CommonUtil.toSpringPageable(parkingLotRequestParam);
      //   QParkingLotInfo parkingLotInfoForQuery = QParkingLotInfo.parkingLotInfo;
-        BooleanBuilder predicate = new BooleanBuilder();
+//        BooleanBuilder predicate = new BooleanBuilder();
 
         if (nonNull(parkingLotRequestParam.getAddr())) {
      //       predicate.and(parkingLotInfoForQuery.addr.like("%" + parkingLotRequestParam.getAddr() + "%"));
@@ -43,9 +44,9 @@ public class ParkingLotSearch {
         }
 
         return parkingLotInfoRepository.findAll(predicate, pageable);
-    }
+    }*/
 
-    public List<ParkingLotInfo> searchCacheDataByPredicate(ParkingLotRequestParam parkingLotRequestParam) {
+    public ParkingLotInfoListResponse searchCacheDataByPredicate(ParkingLotRequestParam parkingLotRequestParam) {
         Pageable pageable = CommonUtil.toSpringPageable(parkingLotRequestParam);
 
         List<ParkingLotInfo> allParkingLotDataList = cacheService.getParkingLotInfoOpenAPI();
@@ -96,7 +97,6 @@ public class ParkingLotSearch {
         }
 
         int totalCount = allParkingLotDataList.size();
-
-        return resultParkingLotDataList;
+        return new ParkingLotInfoListResponse(totalCount,resultParkingLotDataList);
     }
 }
