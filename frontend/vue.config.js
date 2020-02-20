@@ -8,7 +8,6 @@ const baseConfig = function() {
   if(process.env.NODE_ENV === 'production') {
     settingArgument = {
       publicPath: '/',
-      assetsDir: "static",
       outputDir: "../src/main/resources/static",
       runtimeCompiler: undefined,
       productionSourceMap: undefined,

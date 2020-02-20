@@ -1,7 +1,7 @@
 <template>
   <div id="page_wrapper">
     <header>
-      <h1><a @click="goMain" style="cursor: pointer"><img src="../assets/logo.png" width="135" height="38" alt="로고"></a></h1>
+      <h1><a style="cursor: pointer"><img src="../assets/logo.png" width="135" height="38" alt="로고"></a></h1>
 
     </header>
 

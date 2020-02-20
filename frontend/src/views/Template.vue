@@ -1,128 +1,180 @@
 <template>
-  <div class="main">
-    <h2 class="title">{{title}}
-    </h2>
-    <div>
-      <h2>예약하기</h2>
-      <form id="resevFrm">
-        <table class="table_width">
+    <div class="main">
+        <h2 class="title">{{title}}
+        </h2>
 
-          <tr>
-            <th scope="row">회의실ID</th>
-            <td><select name="conferenceId" id="conferenceId">
-            </select></td>
-          </tr>
-          <tr>
-            <th scope="row">예약자명</th>
-            <td><input type="text" name="registedName" id="registedName"></td>
-          </tr>
-          <tr>
-            <th scope="row">예약명</th>
-            <td><input type="text" name="reservationName"
-                       id="reservationName"></td>
-          </tr>
-          <tr>
-            <th scope="row">예약일</th>
-            <td><input type="text" id="reservationDate"
-                       class="datepicker" name="reservationDate"></td>
-          </tr>
-          <tr>
-            <th scope="row">예약시간</th>
-            <td><input name="startTime" type="text" class="timeMasking"
-                       id="startTime" maxlength=5> <input name="endTime"
-                                                          type="text" class="timeMasking" id="endTime" maxlength=5>
-            </td>
-          </tr>
-          <tr>
-            <th scope="row">반복횟수</th>
-            <td><input type="number" name="repetitionOfNum"
-                       id="repetitionOfNum"></td>
-          </tr>
+                          <!--주차장명
+          주소
+          전화번호
+          주차현황 정보 제공여부
+          주차 가능 차량 수
+          유무료구분
+          //한 컬럼
+          기본 주차 요금
+          기본 주차 시간(분 단위)
+          추가 단위 요금
+          추가 단위 시간(분 단위)
+          일 최대 요금
+          주차장 위치 좌표 위도
+          주차장 위치 좌표 경도
+          주차가능여부-->
+{{parkingListData}}
+        <div>
+            <input type="text" id="searchAddr" name="searchAddr" placeholder="주소 검색">
+            <input type="text" id="searchTel" name="searchTel" placeholder="전화번호 검색">
+            <input type="text" id="searchParkingName" name="searchParkingName" placeholder="주차장 검색">
+            <button type="button" id="searchBtn" @click="getParkingListData">조회</button>
+            <table class="table_width">
+                <colgroup id="colg">
 
-        </table>
-      </form>
-      <button type="button" id="saveBtn">예약하기</button>
+                </colgroup>
+                <thead>
+                <th scope="row">주차장명</th>
+                <th scope="row">주소</th>
+                <th scope="row">주차현황 정보 제공여부</th>
+                <th scope="row">주차 가능 차량 수</th>
+                <th scope="row">유무료구분</th>
+                <th scope="row">주차 요금</th>
+                <th scope="row">주차장 위치 좌표</th>
+                <th scope="row">현재 주차 가능 여부</th>
+                </thead>
+                <tbody>
+                <tr v-for="p in parkingListData">
+                    <td>{{p.PARKING_CODE}}</td>
+                </tr>
+                </tbody>
+
+            </table>
+            <div>
+
+                <div class="btn-cover">
+                    <button :disabled="pageNo === 0" @click="prev" class="page-btn">
+                        이전
+                    </button>
+
+                    <button type="button" class="page-link" v-for="listPageNumber in pages.slice(pageNo-1, pageNo+5)" @click="pageNo = listPageNumber"> {{listPageNumber}} </button>
+
+                    <button :disabled="pageNo >= pageCount - 1" @click="next" class="page-btn">
+                        다음
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
     </div>
-    <div>
-      <h2>예약현황</h2>
-      <input type="text" id="searchDate" class="datepicker"
-             name="searchDate">
-      <button type="button" id="searchBtn">조회</button>
-      <table class="table_width">
-        <colgroup id="colg">
-
-        </colgroup>
-        <thead id="conferenceTh">
-
-        </thead>
-        <tbody id="reservationTb">
-
-        </tbody>
-
-      </table>
-
-    </div>
-
-  </div>
 </template>
 
 
 <script>
-    export default {
-        name: "template",
-        data(){
-            return {
-              title:'템플릿'
-            }
-        },
-        methods:{
-          initialization : function() {
 
-          },
-          saveReservation : function() {
+  import ApiUtil from "../api/api.util";
+  export default {
+    name: "Template",
+    components: {},
+    created() {
+      this.getParkingListData()
+    },
+    data() {
+      return {
+        title: '주차장 찾기',
+        parkingListData:[],
+        parkingTotCount: 0,
+        pages: [],
+        pageNo : 1,
+        pageSize: 10
+      }
+    },
+    watch:{
+      parkingListData(){
+        this.setPages()
+      }
+    },
+    computed:{
 
-          },
+      pageCount () {
+        let totalCount = this.parkingTotCount
+        let listSize = this.pageSize
+        let page = Math.floor(totalCount / listSize);
+        if (totalCount % listSize > 0) page += 1;
+
+        return page;
+      }
+
+    },
+    methods: {
+      getParkingListData: function(){
+        const vm = this
+        ApiUtil.post('/parking/cache/search',{
+          pageNo : vm.pageNo,
+          pageSize: vm.pageSize
+        }).then(response=>{
+          if(response.message === undefined) {
+            vm.parkingListData = response.data.parkingLotInfoList
+            vm.parkingTotCount = response.data.totalCount
+
+          }
+        })
+
+      },
+      setPages () {
+        let numberOfPages = Math.ceil(this.parkingTotCount / this.pageSize);
+        for (let index = 1; index <= numberOfPages; index++) {
+          this.pages.push(index);
         }
+      },
+      next () {
+        this.pageNo += 1;
+      },
+      prev () {
+        this.pageNo -= 1;
+      },
+      initialization: function () {
+
+      },
+
     }
+  }
 </script>
 
 <style scoped>
-  /*테이블 스타일*/
-  .table_width {
-    width: 100%;
-    border-top: 1px solid #cccccc;
-    font-size: 14px;
-  }
+    /*테이블 스타일*/
+    .table_width {
+        width: 100%;
+        border-top: 1px solid #cccccc;
+        font-size: 14px;
+    }
 
-  .table_width th {
-    padding: 15px 20px;
-    letter-spacing: -1px;
-    /*background: #f4f6f9;*/
-    font-size: 16px;
-    font-weight: bold;
-    color: #333333;
-    border-bottom: 1px solid #ebebeb;
-    vertical-align: middle;
-    text-align: left;
-    background-color: #ffc61c;
-  }
+    .table_width th {
+        padding: 15px 20px;
+        letter-spacing: -1px;
+        /*background: #f4f6f9;*/
+        font-size: 16px;
+        font-weight: bold;
+        color: #333333;
+        border-bottom: 1px solid #ebebeb;
+        vertical-align: middle;
+        text-align: left;
+        background-color: #ffc61c;
+    }
 
-  .table_width td {
-    border-bottom: 1px solid #ebebeb;
-    padding: 7px 20px;
-    vertical-align: middle
-  }
+    .table_width td {
+        border-bottom: 1px solid #ebebeb;
+        padding: 7px 20px;
+        vertical-align: middle
+    }
 
-  .table_width td input[type="text"]:focus {
-    background: #faffbd
-  }
+    .table_width td input[type="text"]:focus {
+        background: #faffbd
+    }
 
-  .main {
-    width: 1024px;
-    margin: 60px auto;
-    overflow: hidden;
-  }
-  h2.title{
-    color : #ffc61c
-  }
+    .main {
+        width: 1024px;
+        margin: 60px auto;
+        overflow: hidden;
+    }
+
+    h2.title {
+        color: #ffc61c
+    }
 </style>
