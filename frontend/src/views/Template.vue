@@ -18,11 +18,10 @@
           주차장 위치 좌표 위도
           주차장 위치 좌표 경도
           주차가능여부-->
-{{parkingListData}}
         <div>
-            <input type="text" id="searchAddr" name="searchAddr" placeholder="주소 검색">
-            <input type="text" id="searchTel" name="searchTel" placeholder="전화번호 검색">
-            <input type="text" id="searchParkingName" name="searchParkingName" placeholder="주차장 검색">
+            <input type="text" id="searchAddr" name="searchAddr" placeholder="주소 검색" v-model="addr">
+            <input type="text" id="searchTel" name="searchTel" placeholder="전화번호 검색" v-model="tel">
+            <input type="text" id="searchParkingName" name="searchParkingName" placeholder="주차장 검색" v-model="parkingName">
             <button type="button" id="searchBtn" @click="getParkingListData">조회</button>
             <table class="table_width">
                 <colgroup id="colg">
@@ -31,16 +30,25 @@
                 <thead>
                 <th scope="row">주차장명</th>
                 <th scope="row">주소</th>
+                <th scope="row">전화번호</th>
                 <th scope="row">주차현황 정보 제공여부</th>
                 <th scope="row">주차 가능 차량 수</th>
                 <th scope="row">유무료구분</th>
                 <th scope="row">주차 요금</th>
-                <th scope="row">주차장 위치 좌표</th>
+                <th scope="row">주차장위치좌표</th>
                 <th scope="row">현재 주차 가능 여부</th>
                 </thead>
                 <tbody>
                 <tr v-for="p in parkingListData">
-                    <td>{{p.PARKING_CODE}}</td>
+                    <td>{{p.PARKING_NAME}}</td>
+                    <td>{{p.ADDR}}</td>
+                    <td>{{p.TEL}}</td>
+                    <td>{{p.QUE_STATUS_NM}}</td>
+                    <td>{{p.CAPACITY}}</td>
+                    <td>{{p.PAY_NM}}</td>
+                    <td>{{p.RATES}}/{{p.TIME_RATE}} 분</td>
+                    <td>{{p.LAT}} / {{p.LNG}}</td>
+                    <td>{{p.currentParkingCheck?'가능':'불가능'}}</td>
                 </tr>
                 </tbody>
 
@@ -80,6 +88,9 @@
         title: '주차장 찾기',
         parkingListData:[],
         parkingTotCount: 0,
+        addr:'',
+        tel:'',
+        parkingName:'',
         pages: [],
         pageNo : 1,
         pageSize: 10
@@ -104,12 +115,18 @@
     },
     methods: {
       getParkingListData: function(){
+
         const vm = this
+        vm.$Progress.start()
         ApiUtil.post('/parking/cache/search',{
           pageNo : vm.pageNo,
-          pageSize: vm.pageSize
+          pageSize: vm.pageSize,
+          addr:vm.addr,
+          tel:vm.tel,
+          parkingName:vm.parkingName
         }).then(response=>{
           if(response.message === undefined) {
+            vm.$Progress.finish()
             vm.parkingListData = response.data.parkingLotInfoList
             vm.parkingTotCount = response.data.totalCount
 

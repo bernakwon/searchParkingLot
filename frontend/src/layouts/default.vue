@@ -1,12 +1,9 @@
 <template>
   <div id="page_wrapper">
-    <header>
-      <h1><a style="cursor: pointer"><img src="../assets/logo.png" width="135" height="38" alt="로고"></a></h1>
 
-    </header>
 
     <router-view></router-view>
-
+    <vue-progress-bar></vue-progress-bar>
 
   </div>
 </template>
