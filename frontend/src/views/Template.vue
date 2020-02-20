@@ -24,31 +24,38 @@
             <input type="text" id="searchParkingName" name="searchParkingName" placeholder="주차장 검색" v-model="parkingName">
             <button type="button" id="searchBtn" @click="getParkingListData">조회</button>
             <table class="table_width">
-                <colgroup id="colg">
-
+                <colgroup>
+                        <col width="15%">
+                    <col width="20%">
+                    <col width="15%">
+                    <col width="15%">
+                    <col width="15%">
+                    <col width="15%">
+                    <col width="15%">
+                    <col width="15%">
                 </colgroup>
                 <thead>
                 <th scope="row">주차장명</th>
                 <th scope="row">주소</th>
                 <th scope="row">전화번호</th>
-                <th scope="row">주차현황 정보 제공여부</th>
+<!--                <th scope="row">주차현황 정보 제공여부</th>-->
                 <th scope="row">주차 가능 차량 수</th>
                 <th scope="row">유무료구분</th>
-                <th scope="row">주차 요금</th>
-                <th scope="row">주차장위치좌표</th>
-                <th scope="row">현재 주차 가능 여부</th>
+                <th scope="row">요금(분)</th>
+                <th scope="row">위도/경도</th>
+                <th scope="row"></th> //가능여부
                 </thead>
                 <tbody>
                 <tr v-for="p in parkingListData">
                     <td>{{p.PARKING_NAME}}</td>
                     <td>{{p.ADDR}}</td>
                     <td>{{p.TEL}}</td>
-                    <td>{{p.QUE_STATUS_NM}}</td>
+<!--                    <td>{{p.QUE_STATUS_NM}}</td>-->
                     <td>{{p.CAPACITY}}</td>
                     <td>{{p.PAY_NM}}</td>
-                    <td>{{p.RATES}}/{{p.TIME_RATE}} 분</td>
+                    <td>{{p.RATES}}({{p.TIME_RATE}})</td>
                     <td>{{p.LAT}} / {{p.LNG}}</td>
-                    <td>{{p.currentParkingCheck?'가능':'불가능'}}</td>
+                    <td>{{p.currentParkingCheck?'O':'X'}}</td>
                 </tr>
                 </tbody>
 
@@ -60,7 +67,7 @@
                         이전
                     </button>
 
-                    <button type="button" class="page-link" v-for="listPageNumber in pages.slice(pageNo-1, pageNo+5)" @click="pageNo = listPageNumber"> {{listPageNumber}} </button>
+                    <button type="button" class="page-link" v-for="listPageNumber in pages.slice(pageNo-1, pageNo+5)" @click="onClickPageNo(listPageNumber)"> {{listPageNumber}} </button>
 
                     <button :disabled="pageNo >= pageCount - 1" @click="next" class="page-btn">
                         다음
@@ -114,6 +121,10 @@
 
     },
     methods: {
+      onClickPageNo: function(pageNo){
+        this.pageNo = pageNo
+        this.getParkingListData()
+      },
       getParkingListData: function(){
 
         const vm = this
@@ -130,6 +141,8 @@
             vm.parkingListData = response.data.parkingLotInfoList
             vm.parkingTotCount = response.data.totalCount
 
+          }else{
+            alert('관리자에게 문의해 주십시오.')
           }
         })
 
@@ -171,7 +184,7 @@
         color: #333333;
         border-bottom: 1px solid #ebebeb;
         vertical-align: middle;
-        text-align: left;
+        text-align: center;
         background-color: #ffc61c;
     }
 
@@ -186,7 +199,7 @@
     }
 
     .main {
-        width: 1024px;
+        width: 1300px;
         margin: 60px auto;
         overflow: hidden;
     }
