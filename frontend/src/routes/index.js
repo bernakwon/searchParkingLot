@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import HelloWorld from '@/components/HelloWorld'
-import Template from "../views/Template"
+import Template from "../views/ParkingLotSearch"
 
 Vue.use(VueRouter)
 

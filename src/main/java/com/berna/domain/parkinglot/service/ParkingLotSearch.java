@@ -100,4 +100,61 @@ public class ParkingLotSearch {
 
         return new ParkingLotInfoListResponse(totalCount,resultParkingLotDataList);
     }
+
+    /**
+     * searchText 하나만 받아 처리 3개의 조건중 하나만 성립해도 검색됨
+     *
+     * */
+    public ParkingLotInfoListResponse searchCacheDataByPredicate2(ParkingLotRequestParam parkingLotRequestParam) {
+        Pageable pageable = CommonUtil.toSpringPageable(parkingLotRequestParam);
+        ParkingLotInfoListResponse aallParkingLotDataMap = cacheService.getParkingLotInfoOpenAPI();
+        List<ParkingLotInfo> allParkingLotDataList = aallParkingLotDataMap.getParkingLotInfoList();
+        long totalCount = aallParkingLotDataMap.getTotalCount();
+
+
+        List<ParkingLotInfo> filterList = new ArrayList<>();
+        if (nonNull(parkingLotRequestParam.getSearchText())) {
+            allParkingLotDataList = allParkingLotDataList.stream().filter(parkingLotInfo -> {
+
+                boolean searchAddr = parkingLotInfo.getAddr().contains(parkingLotRequestParam.getSearchText());
+
+                boolean searchTel = parkingLotInfo.getTel().contains(parkingLotRequestParam.getSearchText());
+
+                boolean searchParkingName = parkingLotInfo.getParkingName().contains(parkingLotRequestParam.getSearchText());
+
+                return searchAddr || searchTel || searchParkingName;
+
+
+        }).collect(Collectors.toList());
+    }
+
+            double myLat = parkingLotRequestParam.getMyLat();
+            double myLng = parkingLotRequestParam.getMyLng();
+//Todo sorting은 따로 test function 만들기
+            if (nonNull(myLat) && nonNull(myLng)) {
+
+                Comparator<ParkingLotInfo> distanceComparator = new Comparator<ParkingLotInfo>() {
+                    @Override
+                    public int compare(ParkingLotInfo o1, ParkingLotInfo o2) {
+                        double o1Distance = CommonUtil.distance(myLat, o1.getLat(), myLng, o1.getLng());
+                        double o2Distance = CommonUtil.distance(myLat, o2.getLat(), myLng, o2.getLng());
+                        return Double.compare(o2Distance, o1Distance);
+                    }
+
+                };
+                if (filterList.size()!=0){
+                    filterList.sort(distanceComparator);
+                }
+            }
+
+        //페이징
+        List<ParkingLotInfo> resultParkingLotDataList = new ArrayList<>();
+        if (allParkingLotDataList.size()!=0){
+            resultParkingLotDataList = allParkingLotDataList.subList(pageable.getPageNumber(), pageable.getPageSize());
+        }
+
+
+        return new ParkingLotInfoListResponse(totalCount,resultParkingLotDataList);
+    }
+
 }
