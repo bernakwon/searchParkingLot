@@ -3,6 +3,7 @@ package com.berna.scheduler.service;
 
 import com.berna.domain.parkinglot.domain.entity.ParkingLotInfo;
 import com.berna.domain.parkinglot.domain.request.ParkingLotRequestParam;
+import com.berna.domain.parkinglot.domain.response.ParkingLotInfoListResponse;
 import com.berna.domain.parkinglot.repository.ParkingLotInfoRepository;
 import com.berna.global.error.exception.APIErrorException;
 import com.berna.scheduler.domain.ApiResult;
@@ -68,8 +69,8 @@ public class CacheService {
 	 */
 	@Cacheable(value="API_ALL_DATA")
 	@CacheEvict(value="API_ALL_DATA")
-	public List<ParkingLotInfo> getParkingLotInfoOpenAPI(){
-		int listTotCnt;
+	public ParkingLotInfoListResponse getParkingLotInfoOpenAPI(){
+		long listTotCnt = 0;
        List<ParkingLotInfo> resultParkingLotInfo = new ArrayList<>();
         // API Error 검사
         List<CodeMessageInfo> codeMessageInfos = new ArrayList<>();
@@ -112,8 +113,8 @@ public class CacheService {
 			throw new APIErrorException(errorMessage);
 		}
 
-
-		return resultParkingLotInfo;
+		ParkingLotInfoListResponse parkingLotInfoListResponse = new ParkingLotInfoListResponse(listTotCnt,resultParkingLotInfo);
+		return parkingLotInfoListResponse;
 	}
 
 }

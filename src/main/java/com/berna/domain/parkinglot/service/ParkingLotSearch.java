@@ -48,8 +48,11 @@ public class ParkingLotSearch {
 
     public ParkingLotInfoListResponse searchCacheDataByPredicate(ParkingLotRequestParam parkingLotRequestParam) {
         Pageable pageable = CommonUtil.toSpringPageable(parkingLotRequestParam);
+        ParkingLotInfoListResponse aallParkingLotDataMap = cacheService.getParkingLotInfoOpenAPI();
+        List<ParkingLotInfo> allParkingLotDataList = aallParkingLotDataMap.getParkingLotInfoList();
+        long totalCount = aallParkingLotDataMap.getTotalCount();
 
-        List<ParkingLotInfo> allParkingLotDataList = cacheService.getParkingLotInfoOpenAPI();
+
         List<ParkingLotInfo> filterList = new ArrayList<>();
 
         filterList = allParkingLotDataList.stream().filter(parkingLotInfo -> {
@@ -92,11 +95,9 @@ public class ParkingLotSearch {
         List<ParkingLotInfo> resultParkingLotDataList = new ArrayList<>();
         if (filterList.size()!=0){
             resultParkingLotDataList = filterList.subList(pageable.getPageNumber(), pageable.getPageSize());
-
-            resultParkingLotDataList.forEach(resultParkingLotData -> resultParkingLotData.setCurrentCheck(resultParkingLotData.isCurrentParkingCheck()));
         }
 
-        int totalCount = allParkingLotDataList.size();
+
         return new ParkingLotInfoListResponse(totalCount,resultParkingLotDataList);
     }
 }

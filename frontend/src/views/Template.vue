@@ -3,29 +3,30 @@
         <h2 class="title">{{title}}
         </h2>
 
-                          <!--주차장명
-          주소
-          전화번호
-          주차현황 정보 제공여부
-          주차 가능 차량 수
-          유무료구분
-          //한 컬럼
-          기본 주차 요금
-          기본 주차 시간(분 단위)
-          추가 단위 요금
-          추가 단위 시간(분 단위)
-          일 최대 요금
-          주차장 위치 좌표 위도
-          주차장 위치 좌표 경도
-          주차가능여부-->
+        <!--주차장명
+주소
+전화번호
+주차현황 정보 제공여부
+주차 가능 차량 수
+유무료구분
+//한 컬럼
+기본 주차 요금
+기본 주차 시간(분 단위)
+추가 단위 요금
+추가 단위 시간(분 단위)
+일 최대 요금
+주차장 위치 좌표 위도
+주차장 위치 좌표 경도
+주차가능여부-->
         <div>
             <input type="text" id="searchAddr" name="searchAddr" placeholder="주소 검색" v-model="addr">
             <input type="text" id="searchTel" name="searchTel" placeholder="전화번호 검색" v-model="tel">
-            <input type="text" id="searchParkingName" name="searchParkingName" placeholder="주차장 검색" v-model="parkingName">
+            <input type="text" id="searchParkingName" name="searchParkingName" placeholder="주차장 검색"
+                   v-model="parkingName">
             <button type="button" id="searchBtn" @click="getParkingListData">조회</button>
             <table class="table_width">
                 <colgroup>
-                        <col width="15%">
+                    <col width="15%">
                     <col width="20%">
                     <col width="15%">
                     <col width="15%">
@@ -38,19 +39,19 @@
                 <th scope="row">주차장명</th>
                 <th scope="row">주소</th>
                 <th scope="row">전화번호</th>
-<!--                <th scope="row">주차현황 정보 제공여부</th>-->
+                <!--                <th scope="row">주차현황 정보 제공여부</th>-->
                 <th scope="row">주차 가능 차량 수</th>
                 <th scope="row">유무료구분</th>
                 <th scope="row">요금(분)</th>
                 <th scope="row">위도/경도</th>
-                <th scope="row"></th> //가능여부
+                <th scope="row"></th> <!--가능여부-->
                 </thead>
                 <tbody>
                 <tr v-for="p in parkingListData">
                     <td>{{p.PARKING_NAME}}</td>
                     <td>{{p.ADDR}}</td>
                     <td>{{p.TEL}}</td>
-<!--                    <td>{{p.QUE_STATUS_NM}}</td>-->
+                    <!--                    <td>{{p.QUE_STATUS_NM}}</td>-->
                     <td>{{p.CAPACITY}}</td>
                     <td>{{p.PAY_NM}}</td>
                     <td>{{p.RATES}}({{p.TIME_RATE}})</td>
@@ -60,23 +61,29 @@
                 </tbody>
 
             </table>
-            <div>
 
-                <div class="btn-cover">
-                    <button :disabled="pageNo === 0" @click="prev" class="page-btn">
-                        이전
-                    </button>
+            <vue-ads-pagination
+                    :total-items="parkingTotCount"
+                    :page="pageNo"
+                    @page-change="pageChange"
+            >
+                <template
+                        slot="buttons"
+                        slot-scope="props"
+                >
+                    <vue-ads-page-button
+                            v-for="(button, key) in props.buttons"
+                            :key="key"
+                            v-bind="button"
+                            :class="{'bg-yellow-dark': button.active}"
+                            @page-change="pageNo = button.page"
+                            @range-change="start = button.start; end = button.end"
+                    />
+                </template>
+            </vue-ads-pagination>
 
-                    <button type="button" class="page-link" v-for="listPageNumber in pages.slice(pageNo-1, pageNo+5)" @click="onClickPageNo(listPageNumber)"> {{listPageNumber}} </button>
-
-                    <button :disabled="pageNo >= pageCount - 1" @click="next" class="page-btn">
-                        다음
-                    </button>
-                </div>
-            </div>
 
         </div>
-
     </div>
 </template>
 
@@ -84,84 +91,72 @@
 <script>
 
   import ApiUtil from "../api/api.util";
+  import VueAdsPagination, {VueAdsPageButton} from "vue-ads-pagination";
+
+
   export default {
     name: "Template",
-    components: {},
+    components: {
+      VueAdsPagination,
+      VueAdsPageButton
+
+    },
     created() {
-      this.getParkingListData()
+     this.getParkingListData()
     },
     data() {
       return {
-        title: '주차장 찾기',
-        parkingListData:[],
+        title: '주차장 Search',
+        parkingListData: [],
         parkingTotCount: 0,
-        addr:'',
-        tel:'',
-        parkingName:'',
-        pages: [],
-        pageNo : 1,
-        pageSize: 10
+        addr: '',
+        tel: '',
+        parkingName: '',
+        pageNo: 0,
+        pageSize: 10,
+        loading: false,
+        start: 0,
+        end: 0,
       }
     },
-    watch:{
-      parkingListData(){
-        this.setPages()
-      }
+    watch: {
     },
-    computed:{
-
-      pageCount () {
-        let totalCount = this.parkingTotCount
-        let listSize = this.pageSize
-        let page = Math.floor(totalCount / listSize);
-        if (totalCount % listSize > 0) page += 1;
-
-        return page;
-      }
-
+    computed: {
     },
     methods: {
-      onClickPageNo: function(pageNo){
-        this.pageNo = pageNo
+      pageChange (page) {
+        console.log(page)
+        this.pageNo = page;
         this.getParkingListData()
       },
-      getParkingListData: function(){
+
+      rageChange (start, end) {
+        this.start = start;
+        this.end = end;
+      },
+      getParkingListData: function () {
 
         const vm = this
         vm.$Progress.start()
-        ApiUtil.post('/parking/cache/search',{
-          pageNo : vm.pageNo,
+        ApiUtil.post('/parking/cache/search', {
+          pageNo: vm.pageNo,
           pageSize: vm.pageSize,
-          addr:vm.addr,
-          tel:vm.tel,
-          parkingName:vm.parkingName
-        }).then(response=>{
-          if(response.message === undefined) {
+          addr: vm.addr,
+          tel: vm.tel,
+          parkingName: vm.parkingName
+        }).then(response => {
+          if (response.message === undefined) {
             vm.$Progress.finish()
             vm.parkingListData = response.data.parkingLotInfoList
             vm.parkingTotCount = response.data.totalCount
 
-          }else{
+          } else {
             alert('관리자에게 문의해 주십시오.')
           }
         })
 
       },
-      setPages () {
-        let numberOfPages = Math.ceil(this.parkingTotCount / this.pageSize);
-        for (let index = 1; index <= numberOfPages; index++) {
-          this.pages.push(index);
-        }
-      },
-      next () {
-        this.pageNo += 1;
-      },
-      prev () {
-        this.pageNo -= 1;
-      },
-      initialization: function () {
 
-      },
 
     }
   }
@@ -206,5 +201,9 @@
 
     h2.title {
         color: #ffc61c
+    }
+
+    .vue-ads-bg-teal-500 {
+        background-color: #ffc61c;
     }
 </style>

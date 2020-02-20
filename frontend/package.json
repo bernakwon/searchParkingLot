@@ -15,6 +15,7 @@
     "load-script-once": "^2.0.1",
     "vee-validate": "^2.2.15",
     "vue": "^2.6.11",
+    "vue-ads-pagination": "^2.1.7",
     "vue-axios": "^2.1.5",
     "vue-class-component": "^6.3.2",
     "vue-extend-layout": "^2.0.6",
@@ -23,6 +24,7 @@
     "vue-progressbar": "^0.7.5",
     "vue-router": "^3.1.5",
     "vuejs-daum-postcode": "^1.0.4",
+    "vuejs-paginate": "^2.1.0",
     "vuex": "^3.1.2"
   },
   "devDependencies": {
