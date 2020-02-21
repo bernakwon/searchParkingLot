@@ -195,14 +195,14 @@ public class ParkingLotInfo implements Comparable<ParkingLotInfo> {
         int queStatusCompare = o.getQueStatus().compareTo(this.getQueStatus());
         if (queStatusCompare != 0) return queStatusCompare;
 */
-        int payYnCompare = 0;
+/*        int payYnCompare = 0;
         if (!this.getPayYn().equals(o.getPayYn()))
         { payYnCompare = this.getPayYn().compareTo(o.getPayYn());}
 
         if (payYnCompare != 0){ return payYnCompare;}
-        else {
+        else {*/
             return (int) (this.getRates() / this.getTimeRate() - o.getRates() / o.getTimeRate());
-        }
+   //     }
 
     }
 

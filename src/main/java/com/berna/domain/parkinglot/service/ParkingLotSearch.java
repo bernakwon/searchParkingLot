@@ -84,7 +84,7 @@ public class ParkingLotSearch {
 
 
             }
-        Collections.sort(filterList);
+     //   Collections.sort(filterList);
         //페이징
         List<ParkingLotInfo> resultParkingLotDataList = new ArrayList<>();
         if (filterList.size()!=0){
