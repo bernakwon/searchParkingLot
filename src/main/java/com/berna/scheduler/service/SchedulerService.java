@@ -5,7 +5,6 @@ import com.berna.global.error.exception.APIErrorException;
 import com.berna.scheduler.domain.CodeMessageInfo;
 import com.berna.domain.parkinglot.domain.entity.ParkingLotInfo;
 import com.berna.scheduler.domain.ApiResult;
-import com.berna.domain.parkinglot.repository.ParkingLotInfoRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,8 +45,6 @@ public class SchedulerService {
 
 	private static final String SUCCESS_API_RESULT_CODE = "INFO-000";
 
-	@Autowired
-	ParkingLotInfoRepository parkingLotInfoRepository;
 
 	public SchedulerService(WebClient.Builder webClient) {
 		this.webClient = webClient.baseUrl(baseUrl)
@@ -65,7 +62,7 @@ public class SchedulerService {
 	public void apiDataSaveDataBase() {
 
 		Set<ParkingLotInfo> resultAllApiData = getParkingLotInfoOpenAPI();
-		parkingLotInfoRepository.saveAll(resultAllApiData);
+	//	parkingLotInfoRepository.saveAll(resultAllApiData);
 
 	}
 

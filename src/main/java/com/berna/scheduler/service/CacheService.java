@@ -2,30 +2,22 @@ package com.berna.scheduler.service;
 
 
 import com.berna.domain.parkinglot.domain.entity.ParkingLotInfo;
-import com.berna.domain.parkinglot.domain.request.ParkingLotRequestParam;
 import com.berna.domain.parkinglot.domain.response.ParkingLotInfoListResponse;
-import com.berna.domain.parkinglot.repository.ParkingLotInfoRepository;
 import com.berna.global.error.exception.APIErrorException;
 import com.berna.scheduler.domain.ApiResult;
 import com.berna.scheduler.domain.CodeMessageInfo;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -68,7 +60,6 @@ public class CacheService {
 	 *
 	 */
 	@Cacheable(value="API_ALL_DATA")
-	@CacheEvict(value="API_ALL_DATA")
 	public ParkingLotInfoListResponse getParkingLotInfoOpenAPI(){
 		long listTotCnt = 0;
        List<ParkingLotInfo> resultParkingLotInfo = new ArrayList<>();

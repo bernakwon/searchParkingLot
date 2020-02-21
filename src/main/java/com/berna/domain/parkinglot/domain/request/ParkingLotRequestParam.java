@@ -15,5 +15,7 @@ public class ParkingLotRequestParam extends PagingParam {
     boolean searchCurrentCheck;
     double myLat;
     double myLng;
+    int start;
+    int end;
 
 }

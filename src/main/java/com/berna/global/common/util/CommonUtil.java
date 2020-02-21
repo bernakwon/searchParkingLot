@@ -20,10 +20,10 @@ public class CommonUtil {
     public static Pageable toSpringPageable(PagingParam pagingParam) {
         PageRequest pageRequest = null;
 
-        int pageNo   = pagingParam.getPage() - 1;
+        int pageNo   = pagingParam.getPage();
         int pageSize = pagingParam.getPageSize();
 
-        Sort sort = pagingParam.getSort();
+
 
         if(pageNo >= 0 && pageSize > 0) {
             pageRequest = new PageRequest(pageNo, pageSize);

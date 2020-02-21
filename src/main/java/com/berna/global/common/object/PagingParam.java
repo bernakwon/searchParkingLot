@@ -24,11 +24,4 @@ public class PagingParam {
     )
     protected int pageSize;
 
-    @ApiModelProperty(
-            example = "DESC",
-            required = true,
-            value = "정렬 정보",
-            hidden = false
-    )
-    protected Sort sort;
 }

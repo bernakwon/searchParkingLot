@@ -26,7 +26,7 @@ public class SwaggerConfig {
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("Search Parking Lot System in Seoul")
-                .description("서울열린데이터 광장의 ‘서울시 공영주차장 안내 정보'를 이용를 활용해서 주차 가능한 주차장을 찾을 수 있는 서비스")
+                .description("서울열린데이터 광장의 ‘서울시 공영주차장 안내 정보'를 활용해서 주차 가능한 주차장을 찾을 수 있는 서비스")
                 .version("1.0")
                 .build();
     }

@@ -4,13 +4,10 @@ import com.berna.domain.parkinglot.domain.entity.ParkingLotInfo;
 
 import com.berna.domain.parkinglot.domain.request.ParkingLotRequestParam;
 import com.berna.domain.parkinglot.domain.response.ParkingLotInfoListResponse;
-import com.berna.domain.parkinglot.repository.ParkingLotInfoRepository;
 import com.berna.global.common.util.CommonUtil;
 import com.berna.scheduler.service.CacheService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -21,9 +18,6 @@ import static java.util.Objects.nonNull;
 
 @Service
 public class ParkingLotSearch {
-
-    @Autowired
-    ParkingLotInfoRepository parkingLotInfoRepository;
 
     @Autowired
     CacheService cacheService;
@@ -48,9 +42,9 @@ public class ParkingLotSearch {
 
     public ParkingLotInfoListResponse searchCacheDataByPredicate(ParkingLotRequestParam parkingLotRequestParam) {
         Pageable pageable = CommonUtil.toSpringPageable(parkingLotRequestParam);
-        ParkingLotInfoListResponse aallParkingLotDataMap = cacheService.getParkingLotInfoOpenAPI();
-        List<ParkingLotInfo> allParkingLotDataList = aallParkingLotDataMap.getParkingLotInfoList();
-        long totalCount = aallParkingLotDataMap.getTotalCount();
+        ParkingLotInfoListResponse allParkingLotDataMap = cacheService.getParkingLotInfoOpenAPI();
+        List<ParkingLotInfo> allParkingLotDataList = allParkingLotDataMap.getParkingLotInfoList();
+        long totalCount = allParkingLotDataMap.getTotalCount();
 
 
         List<ParkingLotInfo> filterList = new ArrayList<>();
@@ -71,30 +65,32 @@ public class ParkingLotSearch {
             return searchAddr && searchTel && searchParkingName;
         }).collect(Collectors.toList());
 
-        if (nonNull(parkingLotRequestParam)) {
+
             double myLat = parkingLotRequestParam.getMyLat();
             double myLng = parkingLotRequestParam.getMyLng();
 //Todo sorting은 따로 test function 만들기
-            if (nonNull(myLat) && nonNull(myLng)) {
+        if (myLat != 0.0 && myLng != 0.0) {
 
                 Comparator<ParkingLotInfo> distanceComparator = new Comparator<ParkingLotInfo>() {
                     @Override
                     public int compare(ParkingLotInfo o1, ParkingLotInfo o2) {
                         double o1Distance = CommonUtil.distance(myLat, o1.getLat(), myLng, o1.getLng());
                         double o2Distance = CommonUtil.distance(myLat, o2.getLat(), myLng, o2.getLng());
-                        return Double.compare(o2Distance, o1Distance);
+                        return Double.compare(o1Distance, o2Distance);
                     }
 
                 };
-                if (filterList.size()!=0){
-                    filterList.sort(distanceComparator);
-                }
+            filterList.sort(distanceComparator);
+
+
             }
-        }
+        Collections.sort(filterList);
         //페이징
         List<ParkingLotInfo> resultParkingLotDataList = new ArrayList<>();
         if (filterList.size()!=0){
-            resultParkingLotDataList = filterList.subList(pageable.getPageNumber(), pageable.getPageSize());
+
+
+            resultParkingLotDataList = filterList.subList(parkingLotRequestParam.getStart(),parkingLotRequestParam.getEnd());
         }
 
 
@@ -106,7 +102,7 @@ public class ParkingLotSearch {
      *
      * */
     public ParkingLotInfoListResponse searchCacheDataByPredicate2(ParkingLotRequestParam parkingLotRequestParam) {
-        Pageable pageable = CommonUtil.toSpringPageable(parkingLotRequestParam);
+
         ParkingLotInfoListResponse aallParkingLotDataMap = cacheService.getParkingLotInfoOpenAPI();
         List<ParkingLotInfo> allParkingLotDataList = aallParkingLotDataMap.getParkingLotInfoList();
         long totalCount = aallParkingLotDataMap.getTotalCount();
@@ -131,14 +127,14 @@ public class ParkingLotSearch {
             double myLat = parkingLotRequestParam.getMyLat();
             double myLng = parkingLotRequestParam.getMyLng();
 //Todo sorting은 따로 test function 만들기
-            if (nonNull(myLat) && nonNull(myLng)) {
+            if (myLat != 0.0 && myLng != 0.0) {
 
                 Comparator<ParkingLotInfo> distanceComparator = new Comparator<ParkingLotInfo>() {
                     @Override
                     public int compare(ParkingLotInfo o1, ParkingLotInfo o2) {
                         double o1Distance = CommonUtil.distance(myLat, o1.getLat(), myLng, o1.getLng());
                         double o2Distance = CommonUtil.distance(myLat, o2.getLat(), myLng, o2.getLng());
-                        return Double.compare(o2Distance, o1Distance);
+                        return Double.compare(o1Distance,o2Distance);
                     }
 
                 };
@@ -150,7 +146,7 @@ public class ParkingLotSearch {
         //페이징
         List<ParkingLotInfo> resultParkingLotDataList = new ArrayList<>();
         if (allParkingLotDataList.size()!=0){
-            resultParkingLotDataList = allParkingLotDataList.subList(pageable.getPageNumber(), pageable.getPageSize());
+            resultParkingLotDataList = allParkingLotDataList.subList(parkingLotRequestParam.getPage(), parkingLotRequestParam.getPageSize());
         }
 
 
