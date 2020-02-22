@@ -106,9 +106,11 @@ IDE Open -> File -> Open -> SearchParkingLot
    #### 테스트 전략
     Backend
    
-    1. 단위테스트 : serviceImpl단의 주요로직 검증
+    1. 단위테스트 : 검색조건과 페이징 조건에 따라 목록 리턴의 성공여부, 정렬조건에 따른 정렬 성공 여부
   	
-  	2. 배치테스트 : API 호출 데이터 수집 로직 검증
+  	2. Cache테스트 : API 호출 데이터 수집 로직 검증
+  	
+  	3. API 호출테스트 : API 호출 성공여부와 원하는 데이터로의 매핑이 성공적인지 여부
   	
   	Frontend
        
