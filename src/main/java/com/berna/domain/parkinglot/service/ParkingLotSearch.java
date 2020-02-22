@@ -66,15 +66,19 @@ public class ParkingLotSearch {
 
         }else Collections.sort(filterList);
 
+        System.out.println(filterList.get(0));
         //페이징
         List<ParkingLotInfo> resultParkingLotDataList = new ArrayList<>();
-        if (filterList.size()!=0){
-
-
-            resultParkingLotDataList = filterList.subList(parkingLotRequestParam.getStart(),parkingLotRequestParam.getEnd());
+        int endIndex = parkingLotRequestParam.getEnd();
+       if(filterList.size()<=endIndex){
+           endIndex = filterList.size();
         }
 
 
+            resultParkingLotDataList = filterList.subList(parkingLotRequestParam.getStart(),endIndex);
+
+
+        System.out.println(resultParkingLotDataList.get(0));
         return new ParkingLotInfoListResponse(totalCount,resultParkingLotDataList);
     }
 

@@ -3,7 +3,9 @@ package com.berna.domain.parkinglot.domain.request;
 
 import com.berna.global.common.object.PagingParam;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * @author hrkwon
@@ -11,6 +13,8 @@ import lombok.Getter;
  *
  */
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class ParkingLotRequestParam {
 
     @ApiModelProperty(
@@ -84,5 +88,26 @@ public class ParkingLotRequestParam {
             hidden = false
     )
     int end;
+
+    public ParkingLotRequestParam(int start, int end) {
+        this.start = start;
+        this.end = end;
+    }
+
+    public ParkingLotRequestParam(double myLat, double myLng, int start, int end) {
+        this.myLat = myLat;
+        this.myLng = myLng;
+        this.start = start;
+        this.end = end;
+    }
+
+    public ParkingLotRequestParam(String addr, String tel, String parkingName, int start, int end) {
+        this.addr = addr;
+        this.tel = tel;
+        this.parkingName = parkingName;
+        this.start = start;
+        this.end = end;
+    }
+
 
 }

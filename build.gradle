@@ -67,7 +67,9 @@ dependencies {
 
 }
 
-
+test {
+	useJUnitPlatform()
+}
 
 
 // npm install 과정

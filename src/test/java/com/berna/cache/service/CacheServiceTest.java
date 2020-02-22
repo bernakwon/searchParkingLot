@@ -11,34 +11,16 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class CacheServiceTest {
 
     @Autowired
-    private SchedulerService schedulerService;
-
-
+    private CacheService cacheService;
 
     @Test
-    public void changeCron() {
+    private void 캐싱성공(){
 
     }
 
-   /* @TestConfiguration
-    static class SchedulingTestConfig implements SchedulingConfigurer {
-        @Autowired
-        private SchedulerService schedulerService;
+    @Test
+    private void 캐싱실패(){
 
-        @Override
-        public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
-            List<IntervalTask> taskList = taskRegistrar.getFixedDelayTaskList();
-            List<IntervalTask> newTaskList = new ArrayList<>();
-
-            for (IntervalTask task : taskList) {
-                ScheduledMethodRunnable runnable = (ScheduledMethodRunnable) task.getRunnable();
-                if (runnable.getTarget() instanceof MyService) {
-                    newTaskList.add(new IntervalTask(runnable, CUSTOM_DELAY, CUSTOM_DELAY));
-                }
-            }
-
-            taskRegistrar.setFixedDelayTasksList(newTaskList);
-        }
     }
-}*/
+
 }

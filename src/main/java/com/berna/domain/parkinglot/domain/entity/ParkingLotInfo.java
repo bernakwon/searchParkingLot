@@ -1,11 +1,12 @@
 package com.berna.domain.parkinglot.domain.entity;
 
+import com.berna.global.common.util.CommonUtil;
 import com.berna.global.common.util.DateUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
+import sun.awt.geom.AreaOp;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -19,6 +20,9 @@ import java.util.Comparator;
  */
 @Getter
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class ParkingLotInfo implements Comparable<ParkingLotInfo> {
 
 
@@ -409,18 +413,26 @@ public class ParkingLotInfo implements Comparable<ParkingLotInfo> {
     @JsonProperty("BUS_ADD_TIME_RATE")
     private String busAddTimeRate;
 
+    private double ratePerMinutes;
    //1분당 기본요금
-   public double ratePerMinutes(){
+   public double getRatePerMinutes(){
         return  this.rates/this.timeRate;
     }
 
     /*기본 정렬은 연계된 데이터 >  무료 > 1분당 요금 낮은 순서*/
     @Override
     public int compareTo(ParkingLotInfo o) {
+
+      /*  double a = this.getRates()/this.getTimeRate();
+        double b  = o.getRates()/o.getTimeRate();
+        System.out.println(this.getRates());
+        return aaa.thenComparingDouble();*/
+
         return Comparator.comparing(ParkingLotInfo::getQueStatus).reversed()
-                .thenComparing(ParkingLotInfo::getPayYn).reversed()
-                .thenComparingDouble(ParkingLotInfo::ratePerMinutes)
+               .thenComparing(ParkingLotInfo::getPayYn)
                 .compare(this, o);
+
+
     }
 
 
@@ -469,4 +481,5 @@ public class ParkingLotInfo implements Comparable<ParkingLotInfo> {
         //미연계중이 아니고 주차가능 대수가 0 이상(현재주차중인 대수는 고려하지 않음), 현재 운영시간인지 여부
         return !this.queStatus.equals("0") && this.capacity > 0 && timeCheck;
     }
+
 }
