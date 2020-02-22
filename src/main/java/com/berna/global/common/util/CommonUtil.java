@@ -1,9 +1,6 @@
 package com.berna.global.common.util;
 
-import com.berna.global.common.object.PagingParam;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+
 
 /**
  * <pre>
@@ -17,23 +14,6 @@ import org.springframework.data.domain.Sort;
  * @return
  */
 public class CommonUtil {
-    public static Pageable toSpringPageable(PagingParam pagingParam) {
-        PageRequest pageRequest = null;
-
-        int pageNo   = pagingParam.getPage();
-        int pageSize = pagingParam.getPageSize();
-
-
-
-        if(pageNo >= 0 && pageSize > 0) {
-            pageRequest = new PageRequest(pageNo, pageSize);
-
-        }else {
-            pageRequest = new PageRequest(0, 10);
-        }
-
-        return pageRequest;
-    }
 
     /**
      * 두 지점간의 거리 계산

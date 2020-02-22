@@ -64,13 +64,17 @@ IDE Open -> File -> Open -> SearchParkingLot
      
   #### 개발 전략
      Backend
-     1. Spring Schduler를 이용하여 Open API Json 전체데이터를 호출 및 수집하여  `서울시 공영주차장 정보(parking_lot_info)` 에 Insert (Open API 전략과 동일하게 5분단위)
+     1. WebClient를 사용하여 API를 Call
+     1. Spring cache를 이용하여 Open API Json 전체데이터를 호출 및 수집하여  `서울시 공영주차장 정보(parking_lot_info)` 목록으로 캐싱한다.
      2. POJO 사용 (Open API 명세가 정해져 있으므로 MAP 사용하지 않는다)
-     3. 기본 JPARepository 가 제공하는 Paging 활용 
+     3. List.subList 를 이용하여 페이징
+     4. Comparator 를 이용한 정렬
      
     Frontend
      1. Vue.js 
-     2. Kakao Map 이용한 Map Component로 경위도 표시   
+     2. vue-ads-pagination 를 이용한 페이징
+     3. navigator.geolocation를 이용한 경/위도 추출
+     
      ## Build
      Gradle Build 시 npm build 함께 동작하도록 플러그인 설정
      

@@ -3,7 +3,6 @@ package com.berna.global.common.object;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
-import org.springframework.data.domain.Sort;
 
 @Getter
 public class PagingParam {

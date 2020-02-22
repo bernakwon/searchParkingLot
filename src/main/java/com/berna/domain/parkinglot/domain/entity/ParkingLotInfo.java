@@ -2,209 +2,428 @@ package com.berna.domain.parkinglot.domain.entity;
 
 import com.berna.global.common.util.DateUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.ToString;
 
-import javax.persistence.Id;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Comparator;
 
-
+/**
+ * @author hrkwon
+ * @className ParkingLotInfoListResponse
+ *
+ */
 @Getter
 @ToString
 public class ParkingLotInfo implements Comparable<ParkingLotInfo> {
 
-    // 주차장코드
+
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value = "주차장 코드",
+            hidden = false
+    )
     @JsonProperty("PARKING_CODE")
     private String parkingCode;
 
-    // 주차장명
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value = "주차장명",
+            hidden = false
+    )
     @JsonProperty("PARKING_NAME")
     private String parkingName;
 
-    // 주차장 종류
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value = "주차장 종류",
+            hidden = false
+    )
     @JsonProperty("PARKING_TYPE")
     private String parkingType;
 
-    // 운영구분명
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value = "운영구분명",
+            hidden = false
+    )
     @JsonProperty("OPERATION_RULE_NM")
     private String operationRuleNm;
 
-    // 버스 추가 단위 요금
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value = "버스 추가 단위 요금",
+            hidden = false
+    )
     @JsonProperty("BUS_ADD_RATES")
     private String busAddRates;
 
-    // 주차장 종류명
+
+
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value = " 주차장 종류명",
+            hidden = false
+    )
     @JsonProperty("PARKING_TYPE_NM")
     private String parkingTypeNm;
 
-    // 주차현황 정보 제공여부명
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value = " 주차현황 정보 제공여부명",
+            hidden = false
+    )
     @JsonProperty("QUE_STATUS_NM")
     private String queStatusNm;
 
-    // 주차 면(주차 가능 차량 수)
+
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value = "주차 면(주차 가능 차량 수)",
+            hidden = false
+    )
     @JsonProperty("CAPACITY")
     private int capacity;
 
-    // 주말 운영 종료시각(HHMM)
+
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value = "주말 운영 종료시각(HHMM)",
+            hidden = false
+    )
     @JsonProperty("WEEKEND_END_TIME")
     private String weekendEndTime;
 
-    // 현재 주차 차량 업데이트 시간
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value = "현재 주차 차량 업데이트 시간",
+            hidden = false
+    )
     @JsonProperty("CUR_PARKING_TIME")
     private String curParkingTime;
 
-    // 유무료구분명
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value = "유무료 구분명",
+            hidden = false
+    )
     @JsonProperty("PAY_NM")
     private String payNm;
 
-    // 평일 운영 종료시각(HHMM)
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value = "평일 운영 종료시각(HHMM)",
+            hidden = false
+    )
     @JsonProperty("WEEKDAY_END_TIME")
     private String weekdayEndTime;
 
-    // 배정코드명
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value = "배정코드명",
+            hidden = false
+    )
     @JsonProperty("ASSIGN_CODE_NM")
     private String assignCodeNm;
 
-    // 주차현황 정보 제공여부
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value = "주차현황 정보 제공여부",
+            hidden = false
+    )
     @JsonProperty("QUE_STATUS")
     private String queStatus;
 
-    // 배정코드
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value = "배정코드",
+            hidden = false
+    )
     @JsonProperty("ASSIGN_CODE")
     private String assignCode;
 
-    // 추가 단위 요금
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value = "추가 단위 요금",
+            hidden = false
+    )
     @JsonProperty("ADD_RATES")
     private String addRates;
 
-    // 추가 단위 시간(분 단위)
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value = "추가 단위 시간(분 단위)",
+            hidden = false
+    )
     @JsonProperty("ADD_TIME_RATE")
     private String addTimeRate;
 
-    // 전화번호
+
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value = "전화번호",
+            hidden = false
+    )
     @JsonProperty("TEL")
     private String tel;
 
-    // 유무료구분
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value = "유무료구분",
+            hidden = false
+    )
     @JsonProperty("PAY_YN")
     private String payYn;
 
-    // 토요일 유무료 구분
+
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value = "토요일 유무료 구분",
+            hidden = false
+    )
     @JsonProperty("SATURDAY_PAY_YN")
     private String saturdayPayYn;
 
-    // 주소
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value = "주소",
+            hidden = false
+    )
     @JsonProperty("ADDR")
     private String addr;
 
-    // 토요일 유무료 구분명
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value = "토요일 유무료 구분명",
+            hidden = false
+    )
     @JsonProperty("saturdayPayNm")
     private String saturdayPayNm;
 
-    // 일 최대 요금
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value = "일 최대 요금",
+            hidden = false
+    )
     @JsonProperty("DAY_MAXIMUM")
     private String dayMaximum;
 
-    // 공휴일 운영 종료시각(HHMM)
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value = "공휴일 운영 종료시각(HHMM)",
+            hidden = false
+    )
     @JsonProperty("HOLIDAY_END_TIME")
     private String holidayEndTime;
 
-    // 공휴일 유무료 구분명
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value = "공휴일 유무료 구분명",
+            hidden = false
+    )
     @JsonProperty("HOLIDAY_PAY_NM")
     private String holidayPayNm;
 
-    // 주말 운영 시작시각(HHMM)
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value = "주말 운영 시작시각(HHMM)",
+            hidden = false
+    )
     @JsonProperty("WEEKEND_BEGIN_TIME")
     private String weekendBeginTime;
-    @Id
-    // 주차장 위치 좌표 경도
+
+
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value = "주차장 위치 좌표 경도",
+            hidden = false
+    )
     @JsonProperty("LNG")
     private double lng;
 
-    // 월 정기권 금액
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value = "월 정기권 금액",
+            hidden = false
+    )
     @JsonProperty("FULLTIME_MONTHLY")
     private String fulltimeMonthly;
 
-    // 현재 주차중인 대수
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value = "현재 주차중인 대수",
+            hidden = false
+    )
     @JsonProperty("CUR_PARKING")
     private int curParking;
 
-    // 주차장 위치 좌표 위도
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value = "주차장 위치 좌표 위도",
+            hidden = false
+    )
     @JsonProperty("LAT")
     private double lat;
 
-    // 공휴일 운영 시작시각(HHMM)
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value = "공휴일 운영 시작시각(HHMM)",
+            hidden = false
+    )
     @JsonProperty("HOLIDAY_BEGIN_TIME")
     private String holidayBeginTime;
 
-    // 운영구분
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value = "운영구분",
+            hidden = false
+    )
     @JsonProperty("OPERATION_RULE")
     private String operationRule;
 
-    // 기본 주차 시간(분 단위)
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value = "기본 주차 시간(분 단위)",
+            hidden = false
+    )
     @JsonProperty("TIME_RATE")
-    private float timeRate;
+    private double timeRate;
 
-    // 평일 운영 시작시각(HHMM)
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value = "평일 운영 시작시각(HHMM)",
+            hidden = false
+    )
     @JsonProperty("WEEKDAY_BEGIN_TIME")
     private String weekdayBeginTime;
 
-    // 기본 주차 요금
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value =  "기본 주차 요금",
+            hidden = false
+    )
     @JsonProperty("RATES")
-    private float rates;
+    private double rates;
 
-    // 야간무료개방여부명
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value =  "야간무료개방여부명",
+            hidden = false
+    )
     @JsonProperty("NIGHT_FREE_OPEN_NM")
     private String nightFreeOpenNm;
 
-    // 버스 기본 주차 요금
+
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value =  "버스 기본 주차 요금",
+            hidden = false
+    )
     @JsonProperty("BUS_RATES")
     private String busRates;
 
-    // 공휴일 유무료 구분
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value =  "공휴일 유무료 구분",
+            hidden = false
+    )
     @JsonProperty("HOLIDAY_PAY_YN")
     private String holidayPayYn;
 
-    // 야간무료개방여부
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value =  "야간무료개방여부",
+            hidden = false
+    )
     @JsonProperty("NIGHT_FREE_OPEN")
     private String nightFreeOpen;
 
-    // 버스 기본 주차 시간(분 단위)
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value =  "버스 기본 주차 시간(분 단위)",
+            hidden = false
+    )
     @JsonProperty("BUS_TIME_RATE")
     private String busTimeRate;
 
-    // 노상 주차장 관리그룹번호
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value =  "노상 주차장 관리그룹번호",
+            hidden = false
+    )
     @JsonProperty("GRP_PARKNM")
     private String grpParknm;
 
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value =  "노상 주차장 관리그룹번호",
+            hidden = false
+    )
     // 버스 추가 단위 시간(분 단위)
     @JsonProperty("BUS_ADD_TIME_RATE")
     private String busAddTimeRate;
 
-    // 최종데이터 동기화 시간
-    @JsonProperty("SYNC_TIME")
-    private String syncTime;
+   //1분당 기본요금
+   public double ratePerMinutes(){
+        return  this.rates/this.timeRate;
+    }
 
-    /*기본 정렬은 분 단위 당 에상요금 최소*/
-    //TODO 추가 요금에 대한 것을 해결하고 가야함
+    /*기본 정렬은 연계된 데이터 >  무료 > 1분당 요금 낮은 순서*/
     @Override
     public int compareTo(ParkingLotInfo o) {
-        /*if (this.getQueStatus().equals(o.getQueStatus())) return 0;
-        int queStatusCompare = o.getQueStatus().compareTo(this.getQueStatus());
-        if (queStatusCompare != 0) return queStatusCompare;
-*/
-/*        int payYnCompare = 0;
-        if (!this.getPayYn().equals(o.getPayYn()))
-        { payYnCompare = this.getPayYn().compareTo(o.getPayYn());}
-
-        if (payYnCompare != 0){ return payYnCompare;}
-        else {*/
-            return (int) (this.getRates() / this.getTimeRate() - o.getRates() / o.getTimeRate());
-   //     }
-
+        return Comparator.comparing(ParkingLotInfo::getQueStatus).reversed()
+                .thenComparing(ParkingLotInfo::getPayYn).reversed()
+                .thenComparingDouble(ParkingLotInfo::ratePerMinutes)
+                .compare(this, o);
     }
+
+
 
     /*현재 주차가능 여부 체크 */
     public boolean isCurrentParkingCheck() {

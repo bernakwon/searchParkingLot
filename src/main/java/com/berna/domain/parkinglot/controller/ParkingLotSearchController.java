@@ -1,32 +1,33 @@
 package com.berna.domain.parkinglot.controller;
 
-import com.berna.domain.parkinglot.domain.entity.ParkingLotInfo;
 import com.berna.domain.parkinglot.domain.request.ParkingLotRequestParam;
 import com.berna.domain.parkinglot.domain.response.ParkingLotInfoListResponse;
 import com.berna.domain.parkinglot.service.ParkingLotSearch;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
+@Api(value="주차장 정보 api")
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class ParkingLotSearchController {
     @Autowired
     ParkingLotSearch parkingLotSearch;
-//
-//    @PostMapping("/parking/database/search")
-//    public Page<ParkingLotInfo> searchDbDataByPredicate(@RequestBody ParkingLotRequestParam parkingLotRequestParam){
-//        return parkingLotSearch.searchDbDataByPredicate(parkingLotRequestParam);
-//    }
 
+    /**
+     * @author hrkwon
+     * @className searchCacheDataByApi
+     *
+     */
+    @ApiOperation(value = "주차장 정보 list 조회 Api")
     @PostMapping("/parking/cache/search")
-    public ParkingLotInfoListResponse searchCacheDataByPredicate(@RequestBody ParkingLotRequestParam parkingLotRequestParam){
-        return parkingLotSearch.searchCacheDataByPredicate(parkingLotRequestParam);
+    public ParkingLotInfoListResponse searchCacheDataByApi(@RequestBody ParkingLotRequestParam parkingLotRequestParam){
+        return parkingLotSearch.searchCacheDataByApi(parkingLotRequestParam);
     }
 }

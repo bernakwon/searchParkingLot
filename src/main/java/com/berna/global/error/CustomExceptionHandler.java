@@ -5,7 +5,6 @@ import java.util.Date;
 
 
 import com.berna.global.error.exception.APIErrorException;
-import com.berna.global.error.exception.TimeErrorException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,18 +24,11 @@ public class CustomExceptionHandler {
 
 	@ExceptionHandler(APIErrorException.class)
     public ErrorInfo handleReservationReduplicationException(APIErrorException _ex,WebRequest _req) {
-			
-		ErrorInfo errorInfo =  new ErrorInfo(new Date(),_ex.getMessage(),_req.getDescription(false));
-		return errorInfo;
-		
-    }
-	
 
-	@ExceptionHandler(TimeErrorException.class)
-    public ErrorInfo handleReservationTimeErrorException(TimeErrorException _ex,WebRequest _req) {
-			
 		ErrorInfo errorInfo =  new ErrorInfo(new Date(),_ex.getMessage(),_req.getDescription(false));
 		return errorInfo;
-		
+
     }
+
+
 }

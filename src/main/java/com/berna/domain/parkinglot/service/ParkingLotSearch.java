@@ -5,10 +5,12 @@ import com.berna.domain.parkinglot.domain.entity.ParkingLotInfo;
 import com.berna.domain.parkinglot.domain.request.ParkingLotRequestParam;
 import com.berna.domain.parkinglot.domain.response.ParkingLotInfoListResponse;
 import com.berna.global.common.util.CommonUtil;
-import com.berna.scheduler.service.CacheService;
+import com.berna.cache.service.CacheService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
+
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -16,32 +18,16 @@ import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
 
+@Api(value="주차장 정보 로직")
 @Service
 public class ParkingLotSearch {
 
     @Autowired
     CacheService cacheService;
 
-/*    public Page<ParkingLotInfo> searchDbDataByPredicate(ParkingLotRequestParam parkingLotRequestParam) {
-        Pageable pageable = CommonUtil.toSpringPageable(parkingLotRequestParam);
-     //   QParkingLotInfo parkingLotInfoForQuery = QParkingLotInfo.parkingLotInfo;
-//        BooleanBuilder predicate = new BooleanBuilder();
+    @ApiOperation(value = "주차장 정보 list 조회 Service" ,notes="검색조건과 페이징 index를 가지고 캐시된 목록을 조회한다.")
+    public ParkingLotInfoListResponse searchCacheDataByApi(ParkingLotRequestParam parkingLotRequestParam) {
 
-        if (nonNull(parkingLotRequestParam.getAddr())) {
-     //       predicate.and(parkingLotInfoForQuery.addr.like("%" + parkingLotRequestParam.getAddr() + "%"));
-        }
-        if (nonNull(parkingLotRequestParam.getTel())) {
-     //       predicate.and(parkingLotInfoForQuery.tel.like("%" + parkingLotRequestParam.getTel() + "%"));
-        }
-        if (nonNull(parkingLotRequestParam.getParkingName())) {
-      //      predicate.and(parkingLotInfoForQuery.parkingName.like("%" + parkingLotRequestParam.getParkingName() + "%"));
-        }
-
-        return parkingLotInfoRepository.findAll(predicate, pageable);
-    }*/
-
-    public ParkingLotInfoListResponse searchCacheDataByPredicate(ParkingLotRequestParam parkingLotRequestParam) {
-        Pageable pageable = CommonUtil.toSpringPageable(parkingLotRequestParam);
         ParkingLotInfoListResponse allParkingLotDataMap = cacheService.getParkingLotInfoOpenAPI();
         List<ParkingLotInfo> allParkingLotDataList = allParkingLotDataMap.getParkingLotInfoList();
         long totalCount = allParkingLotDataMap.getTotalCount();
@@ -68,23 +54,18 @@ public class ParkingLotSearch {
 
             double myLat = parkingLotRequestParam.getMyLat();
             double myLng = parkingLotRequestParam.getMyLng();
-//Todo sorting은 따로 test function 만들기
+
         if (myLat != 0.0 && myLng != 0.0) {
 
-                Comparator<ParkingLotInfo> distanceComparator = new Comparator<ParkingLotInfo>() {
-                    @Override
-                    public int compare(ParkingLotInfo o1, ParkingLotInfo o2) {
-                        double o1Distance = CommonUtil.distance(myLat, o1.getLat(), myLng, o1.getLng());
-                        double o2Distance = CommonUtil.distance(myLat, o2.getLat(), myLng, o2.getLng());
-                        return Double.compare(o1Distance, o2Distance);
-                    }
-
+                Comparator<ParkingLotInfo> distanceComparator = (o1, o2) -> {
+                    double o1Distance = CommonUtil.distance(myLat, o1.getLat(), myLng, o1.getLng());
+                    double o2Distance = CommonUtil.distance(myLat, o2.getLat(), myLng, o2.getLng());
+                    return Double.compare(o1Distance, o2Distance);
                 };
-            filterList.sort(distanceComparator);
+            Collections.sort(filterList,distanceComparator);
 
+        }else Collections.sort(filterList);
 
-            }
-     //   Collections.sort(filterList);
         //페이징
         List<ParkingLotInfo> resultParkingLotDataList = new ArrayList<>();
         if (filterList.size()!=0){
@@ -101,7 +82,8 @@ public class ParkingLotSearch {
      * searchText 하나만 받아 처리 3개의 조건중 하나만 성립해도 검색됨
      *
      * */
-    public ParkingLotInfoListResponse searchCacheDataByPredicate2(ParkingLotRequestParam parkingLotRequestParam) {
+    @ApiOperation(value = "주차장 정보 list 조회 Service 두번째" ,notes="검색조건을 분리하지 않고 3개의 조건 중 부합하는 목록을 조회한다.")
+    public ParkingLotInfoListResponse searchCacheDataByApi2(ParkingLotRequestParam parkingLotRequestParam) {
 
         ParkingLotInfoListResponse aallParkingLotDataMap = cacheService.getParkingLotInfoOpenAPI();
         List<ParkingLotInfo> allParkingLotDataList = aallParkingLotDataMap.getParkingLotInfoList();
@@ -146,7 +128,7 @@ public class ParkingLotSearch {
         //페이징
         List<ParkingLotInfo> resultParkingLotDataList = new ArrayList<>();
         if (allParkingLotDataList.size()!=0){
-            resultParkingLotDataList = allParkingLotDataList.subList(parkingLotRequestParam.getPage(), parkingLotRequestParam.getPageSize());
+            resultParkingLotDataList = allParkingLotDataList.subList(parkingLotRequestParam.getStart(),parkingLotRequestParam.getEnd());
         }
 
 
