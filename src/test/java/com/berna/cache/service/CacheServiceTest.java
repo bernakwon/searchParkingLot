@@ -84,11 +84,11 @@ public class CacheServiceTest {
         ParkingLotInfoListResponse get1 = new ParkingLotInfoListResponse(150,testList,date1);
         ParkingLotInfoListResponse get2 = new ParkingLotInfoListResponse(120,testList,date2);
 
-        when(cacheService.getParkingLotInfoOpenAPI(date1)).thenReturn(get1, get2);
-
+        when(cacheService.getParkingLotInfoOpenAPI(date1)).thenReturn(get1);
+        when(cacheService.getParkingLotInfoOpenAPI(date2)).thenReturn(get2);
         // First invocation returns object returned by the method
         ParkingLotInfoListResponse first = cacheService.getParkingLotInfoOpenAPI(firstRefreshParam.getRefreshDate());
-        ParkingLotRequestParam cacheRefreshNotParam = ParkingLotRequestParam.builder().refreshCache(false).refreshDate(first.getRefreshDate()).build();
+        ParkingLotRequestParam cacheRefreshNotParam = ParkingLotRequestParam.builder().refreshCache(false).refreshDate(get1.getRefreshDate()).build();
 
 
         ParkingLotInfoListResponse result = cacheService.getParkingLotInfoOpenAPI(cacheRefreshNotParam.getRefreshDate());
@@ -104,8 +104,6 @@ public class CacheServiceTest {
         result = cacheService.getParkingLotInfoOpenAPI(cacheRefreshParam.getRefreshDate());
         assertThat(result.getTotalCount(), is(get2.getTotalCount()));
 
-        // Verify repository method was invoked once
-        verify(result, Mockito.times(1)).getParkingLotInfoList();
 
     }
 

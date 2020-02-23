@@ -54,7 +54,7 @@ public class ParkingLotSortTest {
 
         //given
         when(cacheService.getParkingLotInfoOpenAPI(REFRESH_DATE)).thenReturn(API_DATA);
-        ParkingLotRequestParam testParkingLotParam = ParkingLotRequestParam.builder().myLat(0.0).myLng(0.0).start(0).end(3).build(); //기본 comcparator
+        ParkingLotRequestParam testParkingLotParam = ParkingLotRequestParam.builder().myLat(0.0).myLng(0.0).start(0).end(3).refreshCache(false).refreshDate(REFRESH_DATE).build(); //기본 comcparator
 
 
         //when
@@ -72,7 +72,7 @@ public class ParkingLotSortTest {
 
         //given
         when(cacheService.getParkingLotInfoOpenAPI(REFRESH_DATE)).thenReturn(API_DATA);
-        ParkingLotRequestParam testParkingLotParam = ParkingLotRequestParam.builder().myLat(37.0).myLng(123.444).start(0).end(3).build();
+        ParkingLotRequestParam testParkingLotParam = ParkingLotRequestParam.builder().searchNearCheck(true).myLat(37.0).myLng(123.444).start(0).end(3).refreshCache(false).refreshDate(REFRESH_DATE).build();
 
         //when
         ParkingLotInfoListResponse finalParkingLotInfoListResponse  = parkingLotSearch.searchCacheDataByApi(testParkingLotParam);
