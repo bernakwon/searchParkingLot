@@ -87,8 +87,8 @@ public class CacheServiceTest {
         when(cacheService.getParkingLotInfoOpenAPI(date1)).thenReturn(get1, get2);
 
         // First invocation returns object returned by the method
-        ParkingLotInfoListResponse first = cacheService.getParkingLotInfoOpenAPI(firstRefreshParam.getRefreshDate());
-        ParkingLotRequestParam cacheRefreshNotParam = ParkingLotRequestParam.builder().refreshCache(false).refreshDate(first.getRefreshDate()).build();
+        ParkingLotInfoListResponse first = cacheService.getParkingLotInfoOpenAPI(date1);
+        ParkingLotRequestParam cacheRefreshNotParam = ParkingLotRequestParam.builder().refreshCache(false).refreshDate(get1.getRefreshDate()).build();
 
 
         ParkingLotInfoListResponse result = cacheService.getParkingLotInfoOpenAPI(cacheRefreshNotParam.getRefreshDate());
