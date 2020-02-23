@@ -1,29 +1,17 @@
 package com.berna.parkinglotInfo.service;
 
-import com.berna.cache.service.CacheService;
-import com.berna.domain.parkinglot.domain.entity.ParkingLotInfo;
-import com.berna.domain.parkinglot.domain.request.ParkingLotRequestParam;
-import com.berna.domain.parkinglot.domain.response.ParkingLotInfoListResponse;
-import com.berna.domain.parkinglot.service.ParkingLotSearch;
+import com.berna.domain.parkinglot.domain.dto.ParkingLotInfo;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.IOException;
 import java.time.*;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

@@ -55,6 +55,7 @@ dependencies {
 
 	compile('com.googlecode.json-simple:json-simple:1.1')
 
+	compile('com.github.ben-manes.caffeine:caffeine')
 
 	// Chinese Calendar
 	compile('com.ibm.icu:icu4j:62.1')

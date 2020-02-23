@@ -1,12 +1,11 @@
 package com.berna.domain.parkinglot.domain.response;
 
 
-import com.berna.domain.parkinglot.domain.entity.ParkingLotInfo;
+import com.berna.domain.parkinglot.domain.dto.ParkingLotInfo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import java.util.List;
 

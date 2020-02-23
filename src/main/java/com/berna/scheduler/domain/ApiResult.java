@@ -1,9 +1,12 @@
 package com.berna.scheduler.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Getter
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
 public class ApiResult {
     @JsonProperty("GetParkInfo")
     private GetParkInfo getParkInfo;

@@ -1,12 +1,9 @@
-package com.berna.domain.parkinglot.domain.entity;
+package com.berna.domain.parkinglot.domain.dto;
 
-import com.berna.global.common.util.CommonUtil;
 import com.berna.global.common.util.DateUtil;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
-import sun.awt.geom.AreaOp;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -414,22 +411,34 @@ public class ParkingLotInfo implements Comparable<ParkingLotInfo> {
     private String busAddTimeRate;
 
     private double ratePerMinutes;
+
+    private String queStatusOrder;
+
    //1분당 기본요금
    public double getRatePerMinutes(){
-        return  this.rates/this.timeRate;
+       if(this.getRates()==0){ //0을 나누면 NAN 발생
+           return 0;
+       }else {
+           return this.getRates() / this.getTimeRate();
+       }
+    }
+
+    //제공동의여부 순서 customize
+    public String getQueStatusOrder(){
+        if(this.queStatus.equals("0")){ // 미연계 데이터는 순서를 마지막으로 변경
+            return "4";
+        }else {
+            return this.queStatus;
+        }
     }
 
     /*기본 정렬은 연계된 데이터 >  무료 > 1분당 요금 낮은 순서*/
     @Override
     public int compareTo(ParkingLotInfo o) {
 
-      /*  double a = this.getRates()/this.getTimeRate();
-        double b  = o.getRates()/o.getTimeRate();
-        System.out.println(this.getRates());
-        return aaa.thenComparingDouble();*/
-
-        return Comparator.comparing(ParkingLotInfo::getQueStatus).reversed()
-               .thenComparing(ParkingLotInfo::getPayYn)
+        return Comparator.comparing(ParkingLotInfo::getQueStatusOrder)
+                .thenComparing(ParkingLotInfo::getPayYn)
+               .thenComparingDouble(ParkingLotInfo::getRatePerMinutes)
                 .compare(this, o);
 
 

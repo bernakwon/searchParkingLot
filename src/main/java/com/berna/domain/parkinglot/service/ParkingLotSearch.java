@@ -1,6 +1,6 @@
 package com.berna.domain.parkinglot.service;
 
-import com.berna.domain.parkinglot.domain.entity.ParkingLotInfo;
+import com.berna.domain.parkinglot.domain.dto.ParkingLotInfo;
 
 import com.berna.domain.parkinglot.domain.request.ParkingLotRequestParam;
 import com.berna.domain.parkinglot.domain.response.ParkingLotInfoListResponse;
@@ -18,14 +18,14 @@ import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
 
-@Api(value="주차장 정보 로직")
+@Api(value = "주차장 정보 로직")
 @Service
 public class ParkingLotSearch {
 
     @Autowired
     CacheService cacheService;
 
-    @ApiOperation(value = "주차장 정보 list 조회 Service" ,notes="검색조건과 페이징 index를 가지고 캐시된 목록을 조회한다.")
+    @ApiOperation(value = "주차장 정보 list 조회 Service", notes = "검색조건과 페이징 index를 가지고 캐시된 목록을 조회한다.")
     public ParkingLotInfoListResponse searchCacheDataByApi(ParkingLotRequestParam parkingLotRequestParam) {
 
         ParkingLotInfoListResponse allParkingLotDataMap = cacheService.getParkingLotInfoOpenAPI();
@@ -52,41 +52,40 @@ public class ParkingLotSearch {
         }).collect(Collectors.toList());
 
 
-            double myLat = parkingLotRequestParam.getMyLat();
-            double myLng = parkingLotRequestParam.getMyLng();
+        double myLat = parkingLotRequestParam.getMyLat();
+        double myLng = parkingLotRequestParam.getMyLng();
 
         if (myLat != 0.0 && myLng != 0.0) {
 
-                Comparator<ParkingLotInfo> distanceComparator = (o1, o2) -> {
-                    double o1Distance = CommonUtil.distance(myLat, o1.getLat(), myLng, o1.getLng());
-                    double o2Distance = CommonUtil.distance(myLat, o2.getLat(), myLng, o2.getLng());
-                    return Double.compare(o1Distance, o2Distance);
-                };
-            Collections.sort(filterList,distanceComparator);
+            Comparator<ParkingLotInfo> distanceComparator = (o1, o2) -> {
+                double o1Distance = CommonUtil.distance(myLat, o1.getLat(), myLng, o1.getLng());
+                double o2Distance = CommonUtil.distance(myLat, o2.getLat(), myLng, o2.getLng());
+                return Double.compare(o1Distance, o2Distance);
+            };
+            Collections.sort(filterList, distanceComparator);
 
-        }else Collections.sort(filterList);
+        } else Collections.sort(filterList);
 
-        System.out.println(filterList.get(0));
+
         //페이징
         List<ParkingLotInfo> resultParkingLotDataList = new ArrayList<>();
         int endIndex = parkingLotRequestParam.getEnd();
-       if(filterList.size()<=endIndex){
-           endIndex = filterList.size();
+        if (filterList.size() <= endIndex) {
+            endIndex = filterList.size();
         }
 
 
-            resultParkingLotDataList = filterList.subList(parkingLotRequestParam.getStart(),endIndex);
+        resultParkingLotDataList = filterList.subList(parkingLotRequestParam.getStart(), endIndex);
 
-
-        System.out.println(resultParkingLotDataList.get(0));
-        return new ParkingLotInfoListResponse(totalCount,resultParkingLotDataList);
+        return new ParkingLotInfoListResponse(totalCount, resultParkingLotDataList);
     }
+
+
 
     /**
      * searchText 하나만 받아 처리 3개의 조건중 하나만 성립해도 검색됨
-     *
-     * */
-    @ApiOperation(value = "주차장 정보 list 조회 Service 두번째" ,notes="검색조건을 분리하지 않고 3개의 조건 중 부합하는 목록을 조회한다.")
+     */
+    @ApiOperation(value = "주차장 정보 list 조회 Service 두번째", notes = "검색조건을 분리하지 않고 3개의 조건 중 부합하는 목록을 조회한다.")
     public ParkingLotInfoListResponse searchCacheDataByApi2(ParkingLotRequestParam parkingLotRequestParam) {
 
         ParkingLotInfoListResponse aallParkingLotDataMap = cacheService.getParkingLotInfoOpenAPI();
@@ -107,36 +106,39 @@ public class ParkingLotSearch {
                 return searchAddr || searchTel || searchParkingName;
 
 
-        }).collect(Collectors.toList());
-    }
+            }).collect(Collectors.toList());
+        }
 
-            double myLat = parkingLotRequestParam.getMyLat();
-            double myLng = parkingLotRequestParam.getMyLng();
-//Todo sorting은 따로 test function 만들기
-            if (myLat != 0.0 && myLng != 0.0) {
+        double myLat = parkingLotRequestParam.getMyLat();
+        double myLng = parkingLotRequestParam.getMyLng();
 
-                Comparator<ParkingLotInfo> distanceComparator = new Comparator<ParkingLotInfo>() {
-                    @Override
-                    public int compare(ParkingLotInfo o1, ParkingLotInfo o2) {
-                        double o1Distance = CommonUtil.distance(myLat, o1.getLat(), myLng, o1.getLng());
-                        double o2Distance = CommonUtil.distance(myLat, o2.getLat(), myLng, o2.getLng());
-                        return Double.compare(o1Distance,o2Distance);
-                    }
+        if (myLat != 0.0 && myLng != 0.0) {
 
-                };
-                if (filterList.size()!=0){
-                    filterList.sort(distanceComparator);
+            Comparator<ParkingLotInfo> distanceComparator = new Comparator<ParkingLotInfo>() {
+                @Override
+                public int compare(ParkingLotInfo o1, ParkingLotInfo o2) {
+                    double o1Distance = CommonUtil.distance(myLat, o1.getLat(), myLng, o1.getLng());
+                    double o2Distance = CommonUtil.distance(myLat, o2.getLat(), myLng, o2.getLng());
+                    return Double.compare(o1Distance, o2Distance);
                 }
-            }
+
+            };
+            Collections.sort(filterList, distanceComparator);
+
+        } else Collections.sort(filterList);
 
         //페이징
         List<ParkingLotInfo> resultParkingLotDataList = new ArrayList<>();
-        if (allParkingLotDataList.size()!=0){
-            resultParkingLotDataList = allParkingLotDataList.subList(parkingLotRequestParam.getStart(),parkingLotRequestParam.getEnd());
+
+        int endIndex = parkingLotRequestParam.getEnd();
+        if (filterList.size() <= endIndex) {
+            endIndex = filterList.size();
         }
 
 
-        return new ParkingLotInfoListResponse(totalCount,resultParkingLotDataList);
+        resultParkingLotDataList = filterList.subList(parkingLotRequestParam.getStart(), endIndex);
+
+        return new ParkingLotInfoListResponse(totalCount, resultParkingLotDataList);
     }
 
 }

@@ -3,10 +3,9 @@ package com.berna.cache.service;
 
 import com.berna.global.error.exception.APIErrorException;
 import com.berna.scheduler.domain.CodeMessageInfo;
-import com.berna.domain.parkinglot.domain.entity.ParkingLotInfo;
+import com.berna.domain.parkinglot.domain.dto.ParkingLotInfo;
 import com.berna.scheduler.domain.ApiResult;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;

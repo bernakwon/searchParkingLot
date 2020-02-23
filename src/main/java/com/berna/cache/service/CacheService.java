@@ -1,7 +1,8 @@
 package com.berna.cache.service;
 
 
-import com.berna.domain.parkinglot.domain.entity.ParkingLotInfo;
+import com.berna.domain.parkinglot.domain.dto.ParkingLotInfo;
+import com.berna.domain.parkinglot.domain.request.ParkingLotRequestParam;
 import com.berna.domain.parkinglot.domain.response.ParkingLotInfoListResponse;
 import com.berna.global.error.exception.APIErrorException;
 import com.berna.scheduler.domain.ApiResult;
@@ -9,7 +10,6 @@ import com.berna.scheduler.domain.CodeMessageInfo;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -62,7 +62,7 @@ public class CacheService {
 	 */
 
 	@ApiOperation(value = "open api 를 통해 메모리 캐시에 수집하는 메서드")
-	@Cacheable(value="API_ALL_DATA")
+	@Cacheable(cacheNames = "API_ALL_DATA")
 	public ParkingLotInfoListResponse getParkingLotInfoOpenAPI(){
 		long listTotCnt = 0;
        List<ParkingLotInfo> resultParkingLotInfo = new ArrayList<>();
@@ -70,9 +70,7 @@ public class CacheService {
         List<CodeMessageInfo> codeMessageInfos = new ArrayList<>();
 
         //get Total Count
-		 ApiResult apiResult =  webClient.get().uri(baseUrl+key+type+serviceName+"/1/1")
-				      .accept(MediaType.APPLICATION_JSON_UTF8)
-				.retrieve().bodyToMono(ApiResult.class).block();
+		 ApiResult apiResult =  callWebClient(1,1);
 
 
 		if(nonNull(apiResult)) {
@@ -83,11 +81,7 @@ public class CacheService {
 				int startIndex = 1000 * idx + 1;
 				int endIndex = 1000 * idx + 1000;
 				String apiUrl = baseUrl + key + type + serviceName + "/" + startIndex + "/" + endIndex;
-				ApiResult result = webClient.get().uri(apiUrl)
-						.accept(MediaType.APPLICATION_JSON_UTF8)
-						.retrieve().bodyToMono(ApiResult.class).block();
-
-
+				ApiResult result = callWebClient(startIndex,endIndex);
 
 				if (result != null) {
 					codeMessageInfos.add(apiResult.getGetParkInfo().getResult());
@@ -109,6 +103,15 @@ public class CacheService {
 
 		ParkingLotInfoListResponse parkingLotInfoListResponse = new ParkingLotInfoListResponse(listTotCnt,resultParkingLotInfo);
 		return parkingLotInfoListResponse;
+	}
+
+
+	public ApiResult callWebClient(int startIndex,int endIndex){
+		String apiUrl = baseUrl + key + type + serviceName + "/" + startIndex + "/" + endIndex;
+		return webClient.get().uri(apiUrl)
+				.accept(MediaType.APPLICATION_JSON_UTF8)
+				.retrieve().bodyToMono(ApiResult.class).block();
+
 	}
 
 }

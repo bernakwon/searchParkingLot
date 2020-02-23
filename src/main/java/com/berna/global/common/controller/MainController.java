@@ -2,6 +2,7 @@ package com.berna.global.common.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
@@ -13,15 +14,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class MainController {
 
 	/*index 페이지로 리턴*/
-	@RequestMapping("/")
+	@GetMapping("/")
 	public String index() {
 		return "index";
 	}
 
-	/* 라우터 redirect*/
-	@RequestMapping(value = "/{path:[^\\.]*}")
+/*	*//* 라우터 redirect*//*
+	@GetMapping(value = "/{path:[^\\.]*}")
 	public String redirect() {
 		return "forward:/";
-	}
+	}*/
 
 }

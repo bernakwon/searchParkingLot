@@ -2,7 +2,7 @@ package com.berna.webclient;
 
 import org.junit.Test;
 
-public class WebClentCallTest {
+public class WebClientCallTest {
 
 
     @Test
