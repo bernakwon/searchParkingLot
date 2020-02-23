@@ -14,7 +14,6 @@
                 <button type="button" id="searchBtn" @click="getParkingListData">조회</button>
                 <button type="button" id="" @click="refreshCache=true">새로고침</button>
             </div>
-
             <div>
                 <table class="table_width">
                     <colgroup>
@@ -25,13 +24,11 @@
                         <col width="15%">
                         <col width="15%">
                         <col width="15%">
-                        <col width="15%">
                     </colgroup>
                     <thead>
                     <th scope="row">주차장명</th>
                     <th scope="row">주소</th>
                     <th scope="row">전화번호</th>
-                    <th scope="row">주차현황 정보 제공여부</th>
                     <th scope="row">주차 가능 차량 수</th>
                     <th scope="row">유무료구분</th>
                     <th scope="row">요금(분)</th>
@@ -41,7 +38,7 @@
                     <tr v-for="p in parkingListData">
                         <td>{{p.PARKING_NAME}}</td>
                         <td>{{p.ADDR}}</td>
-                        <td>{{p.QUE_STATUS_NM}}</td>
+                        <td>{{p.TEL}}</td>
                         <td>{{p.CAPACITY}}</td>
                         <td>{{p.PAY_NM}}</td>
                         <td>{{p.RATES}}({{p.TIME_RATE}})</td>
@@ -120,17 +117,27 @@
             pageNo() {
                 this.getParkingListData()
             },
+            refreshCache(){
+                const vm = this
+                vm.start = 0
+                vm.end = 10
+                vm.pageNo = 0
+                this.getParkingListData()
+            },
             clickSearchNearCheck() {
                 const vm = this
                 if (vm.clickSearchNearCheck) {
                     vm.clickSearchNearLocation()
+
                 } else {
                     vm.myLat = 0
                     vm.myLng = 0
                 }
-                setTimeout(function () {
-                    vm.getParkingListData()
-                }, 200)
+
+                    vm.start = 0
+                    vm.end = 10
+                    vm.pageNo =0
+                this.getParkingListData()
 
             }
         },

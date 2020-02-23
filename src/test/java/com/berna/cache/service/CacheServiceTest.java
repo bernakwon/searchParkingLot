@@ -43,7 +43,7 @@ public class CacheServiceTest {
     List<ParkingLotInfo> testList;
     private static final String SUCCESS_API_RESULT_CODE = "INFO-000";
 
-    @InjectMocks
+    @Mock
     private CacheService cacheService;
 
     @Before
@@ -79,7 +79,7 @@ public class CacheServiceTest {
         String date1 = LocalDateTime.of(2020,2,22,10,00,00).toString();
         String date2 = LocalDateTime.of(2020,2,22,10,00,10).toString();
         ParkingLotRequestParam firstRefreshParam = ParkingLotRequestParam.builder().refreshCache(true).refreshDate(date1).build();
-        ParkingLotRequestParam cacheRefreshNotParam = ParkingLotRequestParam.builder().refreshCache(false).refreshDate(date1).build();
+
         ParkingLotRequestParam cacheRefreshParam = ParkingLotRequestParam.builder().refreshCache(true).refreshDate(date2).build();
         ParkingLotInfoListResponse get1 = new ParkingLotInfoListResponse(150,testList,date1);
         ParkingLotInfoListResponse get2 = new ParkingLotInfoListResponse(120,testList,date2);
@@ -87,7 +87,12 @@ public class CacheServiceTest {
         when(cacheService.getParkingLotInfoOpenAPI(date1)).thenReturn(get1, get2);
 
         // First invocation returns object returned by the method
-        ParkingLotInfoListResponse result = cacheService.getParkingLotInfoOpenAPI(firstRefreshParam.getRefreshDate());
+        ParkingLotInfoListResponse first = cacheService.getParkingLotInfoOpenAPI(firstRefreshParam.getRefreshDate());
+        ParkingLotRequestParam cacheRefreshNotParam = ParkingLotRequestParam.builder().refreshCache(false).refreshDate(first.getRefreshDate()).build();
+
+
+        ParkingLotInfoListResponse result = cacheService.getParkingLotInfoOpenAPI(cacheRefreshNotParam.getRefreshDate());
+
         assertThat(result.getTotalCount(), is(get1.getTotalCount()));
 
         // Second invocation should return cached value, *not* second (as set up above)

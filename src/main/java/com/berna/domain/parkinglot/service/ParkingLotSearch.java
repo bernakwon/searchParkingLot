@@ -71,7 +71,12 @@ public class ParkingLotSearch {
 
         //페이징
         List<ParkingLotInfo> resultParkingLotDataList;
+        int startindex = parkingLotRequestParam.getStart();
         int endIndex = parkingLotRequestParam.getEnd();
+
+        if (filterList.size() == 0) {
+            startindex = filterList.size();
+        }
         if (filterList.size() <= endIndex) {
             endIndex = filterList.size();
         }
@@ -79,7 +84,7 @@ public class ParkingLotSearch {
 
         resultParkingLotDataList = filterList.subList(parkingLotRequestParam.getStart(), endIndex);
 
-        return new ParkingLotInfoListResponse(totalCount, resultParkingLotDataList,refreshKey);
+        return new ParkingLotInfoListResponse(filterList.size(), resultParkingLotDataList,refreshKey);
     }
 
 
