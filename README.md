@@ -31,6 +31,11 @@ IDE Open -> File -> Open -> SearchParkingLot
 #### Encoding
     - project->properties->resource에서 text file encoding을 UTF-8로 변경한다.
 
+#### nodejs 설치 후 npm i 
+
+https://nodejs.org/dist/v12.16.1/node-v12.16.1-x64.msi 
+
+
 #### Run
     - Run->Run As ->Spring Boot App
     - 포트 설정을 7070으로 해두었기때문에 localhost:7070으로 접속해야한다.

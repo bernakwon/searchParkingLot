@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -36,4 +38,12 @@ public class ParkingLotInfoListResponse {
             hidden = false
     )
     List<ParkingLotInfo> parkingLotInfoList;
+
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value = "새로고침 날짜",
+            hidden = false
+    )
+    String refreshDate = LocalDateTime.now().toString();
 }

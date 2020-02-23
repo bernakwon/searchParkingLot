@@ -1,4 +1,4 @@
-package com.berna.scheduler.domain;
+package com.berna.cache.domain;
 
 import com.berna.domain.parkinglot.domain.dto.ParkingLotInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -14,10 +14,15 @@ import java.util.Set;
 @NoArgsConstructor
 public class GetParkInfo {
 
+    /*전체 개수*/
     @JsonProperty("list_total_count")
     private int listTotalCount;
+
+    /*Result Code*/
     @JsonProperty("RESULT")
     private CodeMessageInfo result;
+
+    /*주차장 정보 Data*/
     @JsonProperty("row")
     private List<ParkingLotInfo> row;
 }

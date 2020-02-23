@@ -1,4 +1,4 @@
-package com.berna.scheduler.domain;
+package com.berna.cache.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
@@ -8,6 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ApiResult {
+    /*서비스 이름*/
     @JsonProperty("GetParkInfo")
     private GetParkInfo getParkInfo;
 }

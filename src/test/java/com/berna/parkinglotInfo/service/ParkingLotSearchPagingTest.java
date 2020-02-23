@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -23,7 +24,9 @@ import static org.mockito.Mockito.when;
 public class ParkingLotSearchPagingTest {
     private static ParkingLotInfoListResponse API_DATA = new ParkingLotInfoListResponse();
 
-    private static int list_total_count;
+    private static String REFRESH_DATE;
+
+    private static int LIST_TOTAL_COUNT;
 
     @InjectMocks
     ParkingLotSearch parkingLotSearch;
@@ -33,6 +36,7 @@ public class ParkingLotSearchPagingTest {
 
     @Before
     public void Mock_API_CALL() throws IOException {
+        this.REFRESH_DATE = LocalDateTime.of(2020,2,22,10,00,00).toString();
         List<ParkingLotInfo> testList = new ArrayList<>();
         testList.add(new ParkingLotInfo().builder().addr("서초구 1").tel("").parkingName("1주차장").queStatus("3").payYn("Y").parkingCode("9").rates(1000).timeRate(5).lat(37.2525320).lng(123.3333).build());//200
         testList.add(new ParkingLotInfo().builder().addr("압구정로 2-3").tel("02-3333-3333").parkingName("공영주차장").queStatus("0").payYn("N").parkingCode("8").rates(0).timeRate(0).lat(37.02525).lng(123.3333).build());//0
@@ -43,18 +47,19 @@ public class ParkingLotSearchPagingTest {
         testList.add(new ParkingLotInfo().builder().addr("은평구 1-1").tel("").parkingName("구로주차장").queStatus("2").payYn("N").parkingCode("1").rates(0).timeRate(0).lat(37.43440).lng(13.3333).build());
         testList.add(new ParkingLotInfo().builder().addr("압구정동 11-1").tel("").parkingName("5주차장").queStatus("0").payYn("N").parkingCode("2").rates(0).timeRate(0).lat(37.54979909).lng(127.07326955).build());
         testList.add(new ParkingLotInfo().builder().addr("구로구 11-1").tel("").parkingName("노상주차장").queStatus("3").payYn("N").parkingCode("3").rates(0).timeRate(0).lat(38.0).lng(126.96232545).build());
-        this.API_DATA = new ParkingLotInfoListResponse(150,testList);
+        this.LIST_TOTAL_COUNT = 150;
+        this.API_DATA = new ParkingLotInfoListResponse(150,testList,REFRESH_DATE);
     }
 
 
     @Test
     public void 일반_페이징_테스트(){
         //given
-        when(cacheService.getParkingLotInfoOpenAPI()).thenReturn(API_DATA);
-        ParkingLotRequestParam testParkingLotParam =  new ParkingLotRequestParam(0,5);
+        when(cacheService.getParkingLotInfoOpenAPI(REFRESH_DATE)).thenReturn(API_DATA);
+        ParkingLotRequestParam testParkingLotParam = ParkingLotRequestParam.builder().start(0).end(5).build();
         List<ParkingLotInfo> resultListParkingLotInfoList = API_DATA.getParkingLotInfoList().subList(0,5);
         Collections.sort(resultListParkingLotInfoList);
-        ParkingLotInfoListResponse resultParkingLotInfoResponse = new ParkingLotInfoListResponse(list_total_count,resultListParkingLotInfoList);
+        ParkingLotInfoListResponse resultParkingLotInfoResponse = new ParkingLotInfoListResponse(LIST_TOTAL_COUNT,resultListParkingLotInfoList,REFRESH_DATE);
 
         //when
         ParkingLotInfoListResponse finalParkingLotInfoListResponse  = parkingLotSearch.searchCacheDataByApi(testParkingLotParam);
@@ -69,11 +74,11 @@ public class ParkingLotSearchPagingTest {
     public void 조건검색_테스트(){
 
        //given
-        when(cacheService.getParkingLotInfoOpenAPI()).thenReturn(API_DATA);
-        ParkingLotRequestParam testParkingLotParam =  new ParkingLotRequestParam("압구정","3","공영",0,5);
+        when(cacheService.getParkingLotInfoOpenAPI(REFRESH_DATE)).thenReturn(API_DATA);
+        ParkingLotRequestParam testParkingLotParam =  ParkingLotRequestParam.builder().addr("압구정").tel("3").parkingName("공영").start(0).end(5).build();
         List<ParkingLotInfo> returnData = API_DATA.getParkingLotInfoList();
         List<ParkingLotInfo> resultListParkingLotInfoList = Collections.singletonList(returnData.get(1));
-        ParkingLotInfoListResponse resultParkingLotInfoResponse = new ParkingLotInfoListResponse(list_total_count,resultListParkingLotInfoList);
+        ParkingLotInfoListResponse resultParkingLotInfoResponse = new ParkingLotInfoListResponse(LIST_TOTAL_COUNT,resultListParkingLotInfoList,REFRESH_DATE);
 
         //when
         ParkingLotInfoListResponse finalParkingLotInfoListResponse  = parkingLotSearch.searchCacheDataByApi(testParkingLotParam);

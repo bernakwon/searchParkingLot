@@ -4,6 +4,7 @@ package com.berna.domain.parkinglot.domain.request;
 import com.berna.global.common.object.PagingParam;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,6 +16,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class ParkingLotRequestParam {
 
     @ApiModelProperty(
@@ -57,6 +59,17 @@ public class ParkingLotRequestParam {
     )
     boolean searchCurrentCheck;
 
+
+
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value = "나의 위도",
+            hidden = false
+    )
+    boolean searchNearCheck;
+
+
     @ApiModelProperty(
             example = "",
             required = true,
@@ -89,25 +102,21 @@ public class ParkingLotRequestParam {
     )
     int end;
 
-    public ParkingLotRequestParam(int start, int end) {
-        this.start = start;
-        this.end = end;
-    }
 
-    public ParkingLotRequestParam(double myLat, double myLng, int start, int end) {
-        this.myLat = myLat;
-        this.myLng = myLng;
-        this.start = start;
-        this.end = end;
-    }
-
-    public ParkingLotRequestParam(String addr, String tel, String parkingName, int start, int end) {
-        this.addr = addr;
-        this.tel = tel;
-        this.parkingName = parkingName;
-        this.start = start;
-        this.end = end;
-    }
+    @ApiModelProperty(
+            example = "false",
+            required = true,
+            value = "새로고침여부",
+            hidden = false
+    )
+    boolean refreshCache;
+    @ApiModelProperty(
+            example = "",
+            required = true,
+            value = "새로고침 날짜",
+            hidden = false
+    )
+    String refreshDate;
 
 
 }

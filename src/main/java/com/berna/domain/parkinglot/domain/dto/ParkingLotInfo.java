@@ -20,7 +20,7 @@ import java.util.Comparator;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ParkingLotInfo implements Comparable<ParkingLotInfo> {
+public class ParkingLotInfo implements Comparable<ParkingLotInfo>{
 
 
     @ApiModelProperty(
@@ -414,6 +414,8 @@ public class ParkingLotInfo implements Comparable<ParkingLotInfo> {
 
     private String queStatusOrder;
 
+    private String payYnOrder;
+
    //1분당 기본요금
    public double getRatePerMinutes(){
        if(this.getRates()==0){ //0을 나누면 NAN 발생
@@ -425,19 +427,29 @@ public class ParkingLotInfo implements Comparable<ParkingLotInfo> {
 
     //제공동의여부 순서 customize
     public String getQueStatusOrder(){
-        if(this.queStatus.equals("0")){ // 미연계 데이터는 순서를 마지막으로 변경
+       String unLinkedData = "0";
+        if(this.queStatus.equals(unLinkedData)){ // 미연계 데이터는 순서를 마지막으로 변경
             return "4";
         }else {
             return this.queStatus;
         }
     }
 
-    /*기본 정렬은 연계된 데이터 >  무료 > 1분당 요금 낮은 순서*/
+    public int getPayYnOrder(){
+        String free = "N";
+        if(this.payYn.equals(free)){
+            return 1;
+        }else {
+            return 2;
+        }
+    }
+
+/*기본 정렬은 연계된 데이터 >  무료 > 1분당 요금 낮은 순서*/
     @Override
     public int compareTo(ParkingLotInfo o) {
 
         return Comparator.comparing(ParkingLotInfo::getQueStatusOrder)
-                .thenComparing(ParkingLotInfo::getPayYn)
+                .thenComparing(ParkingLotInfo::getPayYnOrder)
                .thenComparingDouble(ParkingLotInfo::getRatePerMinutes)
                 .compare(this, o);
 

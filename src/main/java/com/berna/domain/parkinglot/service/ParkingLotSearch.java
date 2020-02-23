@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -27,8 +28,11 @@ public class ParkingLotSearch {
 
     @ApiOperation(value = "주차장 정보 list 조회 Service", notes = "검색조건과 페이징 index를 가지고 캐시된 목록을 조회한다.")
     public ParkingLotInfoListResponse searchCacheDataByApi(ParkingLotRequestParam parkingLotRequestParam) {
-
-        ParkingLotInfoListResponse allParkingLotDataMap = cacheService.getParkingLotInfoOpenAPI();
+        String refreshKey = parkingLotRequestParam.getRefreshDate();
+        if(parkingLotRequestParam.isRefreshCache()){
+            refreshKey = LocalDateTime.now().toString();
+        }
+        ParkingLotInfoListResponse allParkingLotDataMap = cacheService.getParkingLotInfoOpenAPI(refreshKey);
         List<ParkingLotInfo> allParkingLotDataList = allParkingLotDataMap.getParkingLotInfoList();
         long totalCount = allParkingLotDataMap.getTotalCount();
 
@@ -51,11 +55,9 @@ public class ParkingLotSearch {
             return searchAddr && searchTel && searchParkingName;
         }).collect(Collectors.toList());
 
-
+        if(parkingLotRequestParam.isSearchNearCheck()){
         double myLat = parkingLotRequestParam.getMyLat();
         double myLng = parkingLotRequestParam.getMyLng();
-
-        if (myLat != 0.0 && myLng != 0.0) {
 
             Comparator<ParkingLotInfo> distanceComparator = (o1, o2) -> {
                 double o1Distance = CommonUtil.distance(myLat, o1.getLat(), myLng, o1.getLng());
@@ -68,7 +70,7 @@ public class ParkingLotSearch {
 
 
         //페이징
-        List<ParkingLotInfo> resultParkingLotDataList = new ArrayList<>();
+        List<ParkingLotInfo> resultParkingLotDataList;
         int endIndex = parkingLotRequestParam.getEnd();
         if (filterList.size() <= endIndex) {
             endIndex = filterList.size();
@@ -77,14 +79,14 @@ public class ParkingLotSearch {
 
         resultParkingLotDataList = filterList.subList(parkingLotRequestParam.getStart(), endIndex);
 
-        return new ParkingLotInfoListResponse(totalCount, resultParkingLotDataList);
+        return new ParkingLotInfoListResponse(totalCount, resultParkingLotDataList,refreshKey);
     }
 
 
 
     /**
      * searchText 하나만 받아 처리 3개의 조건중 하나만 성립해도 검색됨
-     */
+
     @ApiOperation(value = "주차장 정보 list 조회 Service 두번째", notes = "검색조건을 분리하지 않고 3개의 조건 중 부합하는 목록을 조회한다.")
     public ParkingLotInfoListResponse searchCacheDataByApi2(ParkingLotRequestParam parkingLotRequestParam) {
 
@@ -140,5 +142,5 @@ public class ParkingLotSearch {
 
         return new ParkingLotInfoListResponse(totalCount, resultParkingLotDataList);
     }
-
+     */
 }

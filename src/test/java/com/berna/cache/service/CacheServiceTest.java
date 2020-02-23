@@ -1,10 +1,12 @@
 package com.berna.cache.service;
 
+
 import com.berna.domain.parkinglot.domain.dto.ParkingLotInfo;
+import com.berna.domain.parkinglot.domain.request.ParkingLotRequestParam;
 import com.berna.domain.parkinglot.domain.response.ParkingLotInfoListResponse;
-import com.berna.scheduler.domain.ApiResult;
-import com.berna.scheduler.domain.CodeMessageInfo;
-import com.berna.scheduler.domain.GetParkInfo;
+import com.berna.cache.domain.ApiResult;
+import com.berna.cache.domain.CodeMessageInfo;
+import com.berna.cache.domain.GetParkInfo;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,6 +24,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -71,19 +75,29 @@ public class CacheServiceTest {
 
 
     @Test
-    public void shouldUseCache() {
-        ParkingLotInfoListResponse get1 = new ParkingLotInfoListResponse(150,testList);
-        ParkingLotInfoListResponse get2 = new ParkingLotInfoListResponse(120,testList);
+    public void 캐싱_성공() {
+        String date1 = LocalDateTime.of(2020,2,22,10,00,00).toString();
+        String date2 = LocalDateTime.of(2020,2,22,10,00,10).toString();
+        ParkingLotRequestParam firstRefreshParam = ParkingLotRequestParam.builder().refreshCache(true).refreshDate(date1).build();
+        ParkingLotRequestParam cacheRefreshNotParam = ParkingLotRequestParam.builder().refreshCache(false).refreshDate(date1).build();
+        ParkingLotRequestParam cacheRefreshParam = ParkingLotRequestParam.builder().refreshCache(true).refreshDate(date2).build();
+        ParkingLotInfoListResponse get1 = new ParkingLotInfoListResponse(150,testList,date1);
+        ParkingLotInfoListResponse get2 = new ParkingLotInfoListResponse(120,testList,date2);
 
-        when(cacheService.getParkingLotInfoOpenAPI()).thenReturn(get1, get2);
+        when(cacheService.getParkingLotInfoOpenAPI(date1)).thenReturn(get1, get2);
 
         // First invocation returns object returned by the method
-        ParkingLotInfoListResponse result = cacheService.getParkingLotInfoOpenAPI();
+        ParkingLotInfoListResponse result = cacheService.getParkingLotInfoOpenAPI(firstRefreshParam.getRefreshDate());
         assertThat(result.getTotalCount(), is(get1.getTotalCount()));
 
         // Second invocation should return cached value, *not* second (as set up above)
-        result = cacheService.getParkingLotInfoOpenAPI();
+        result = cacheService.getParkingLotInfoOpenAPI(cacheRefreshNotParam.getRefreshDate());
         assertThat(result.getTotalCount(), is(get1.getTotalCount()));
+
+
+        // Second invocation should return cached value, *not* second (as set up above)
+        result = cacheService.getParkingLotInfoOpenAPI(cacheRefreshParam.getRefreshDate());
+        assertThat(result.getTotalCount(), is(get2.getTotalCount()));
 
         // Verify repository method was invoked once
         verify(result, Mockito.times(1)).getParkingLotInfoList();
