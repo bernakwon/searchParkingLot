@@ -72,7 +72,7 @@ public class ParkingLotSortTest {
 
         //given
         when(cacheService.getParkingLotInfoOpenAPI(REFRESH_DATE)).thenReturn(API_DATA);
-        ParkingLotRequestParam testParkingLotParam = ParkingLotRequestParam.builder().searchNearCheck(true).myLat(37.0).myLng(123.444).start(0).end(3).refreshCache(false).refreshDate(REFRESH_DATE).build();
+        ParkingLotRequestParam testParkingLotParam = ParkingLotRequestParam.builder().sortDescription("distance").myLat(37.0).myLng(123.444).start(0).end(3).refreshCache(false).refreshDate(REFRESH_DATE).build();
 
         //when
         ParkingLotInfoListResponse finalParkingLotInfoListResponse  = parkingLotSearch.searchCacheDataByApi(testParkingLotParam);

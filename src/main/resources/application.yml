@@ -18,7 +18,7 @@ spring:
      suffix: .html
 logging:
   level:
-    root: info
+    root: debug
     com.parfait.study.simplelogging.service.SomeService: info
 server:
   port: 7070

@@ -56,7 +56,7 @@ public class ParkingLotSearchPagingTest {
     public void 일반_페이징_테스트(){
         //given
         when(cacheService.getParkingLotInfoOpenAPI(REFRESH_DATE)).thenReturn(API_DATA);
-        ParkingLotRequestParam testParkingLotParam = ParkingLotRequestParam.builder().start(0).end(5).refreshCache(false).refreshDate(REFRESH_DATE).build();
+        ParkingLotRequestParam testParkingLotParam = ParkingLotRequestParam.builder().sortDescription("default").start(0).end(5).refreshCache(false).refreshDate(REFRESH_DATE).build();
         List<ParkingLotInfo> resultListParkingLotInfoList = API_DATA.getParkingLotInfoList().subList(0,5);
         Collections.sort(resultListParkingLotInfoList);
         ParkingLotInfoListResponse resultParkingLotInfoResponse = new ParkingLotInfoListResponse(LIST_TOTAL_COUNT,resultListParkingLotInfoList,REFRESH_DATE);

@@ -35,8 +35,7 @@
                     <th scope="row">주차 가능 차량 수</th>
                     <th scope="row">유무료구분</th>
                     <th scope="row">요금(분)</th>
-                    <th scope="row" @click=""></th> <!--가능여부-->
-                    <th></th>
+                    <th scope="row" @click="sortDescription = 'currentParkingCheck'"></th> <!--가능여부-->
                     </thead>
                     <tbody>
                     <tr v-for="p in parkingListData">
@@ -47,7 +46,6 @@
                         <td>{{p.PAY_NM}}</td>
                         <td>{{p.RATES}}({{p.TIME_RATE}})</td>
                         <td>{{p.currentParkingCheck?'O':'X'}}</td>
-                        <td>{{computeDistance(p.LAT,p.LNG ,myLat,myLng) }}</td>
                     </tr>
                     <tr v-if="parkingTotCount===1"><td colspan="7" style="text-align: center">데이터가 없습니다.</td></tr>
                     </tbody>
@@ -96,7 +94,7 @@
         },
         created() {
             document.title = this.title
-          //처음 api 캐싱
+
 
             this.getParkingListData()
         },
@@ -108,7 +106,6 @@
                 addr: '',
                 tel: '',
                 parkingName: '',
-                searchText: '',
                 searchCurrentCheck: true,
                 pageNo: 0,
                 pageSize: 15,
@@ -118,7 +115,8 @@
                 myLat: 0,
                 myLng: 0,
                 clickSearchNearCheck: false,
-                refreshCache: false,
+                sortDescription:'default',
+                refreshCache: true,
                 refreshDate: ''
             }
         },
@@ -148,27 +146,7 @@
 
             }
         },
-        computed: {},
         methods: {
-          computeDistance:function(startCoordslat,startCoordslng,destCoordslat,destCoordslng){
-            console.log(startCoordslat,startCoordslng,destCoordslat,destCoordslng)
-      let startLatRads = this.degreesToRadians(startCoordslat);
-      let startLongRads = this.degreesToRadians(startCoordslng);
-      let destLatRads =this.degreesToRadians(destCoordslat);
-      let destLongRads = this.degreesToRadians(destCoordslng);
-
-      let Radius = 60 * 1.1515; //지구의 반경(km)
-      let distance = Math.acos(Math.sin(startLatRads) * Math.sin(destLatRads) +
-          Math.cos(startLatRads) * Math.cos(destLatRads) *
-          Math.cos(startLongRads - destLongRads)) * Radius;
-
-      return distance;
-    }
-,
-     degreesToRadians :function(degrees){
-       return (degrees * Math.PI)/180;
-
-    },
           initSearchForm:function(){
             const vm = this
 
@@ -208,6 +186,7 @@
                     pageNo: vm.pageNo,
                     pageSize: vm.pageSize,
                     searchNearCheck: vm.clickSearchNearCheck,
+                    sortDescription : vm.sortDescription,
                     start: (vm.pageNo * vm.pageSize) + 1,
                     end: (vm.pageNo + 1) * vm.pageSize,
                     addr: vm.addr,

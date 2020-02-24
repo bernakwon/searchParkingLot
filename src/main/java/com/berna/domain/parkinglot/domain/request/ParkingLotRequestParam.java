@@ -56,25 +56,6 @@ public class ParkingLotRequestParam {
     @ApiModelProperty(
             example = "",
             required = true,
-            value = "현재 주차 가능 여부",
-            hidden = false
-    )
-    boolean searchCurrentCheck;
-
-
-
-    @ApiModelProperty(
-            example = "",
-            required = true,
-            value = "나의 위도",
-            hidden = false
-    )
-    boolean searchNearCheck;
-
-
-    @ApiModelProperty(
-            example = "",
-            required = true,
             value = "나의 위도",
             hidden = false
     )
@@ -103,6 +84,14 @@ public class ParkingLotRequestParam {
             hidden = false
     )
     int end;
+
+    @ApiModelProperty(
+            example = "default",
+            required = true,
+            value = "정렬 인자",
+            hidden = false
+    )
+    String sortDescription;
 
 
     @ApiModelProperty(

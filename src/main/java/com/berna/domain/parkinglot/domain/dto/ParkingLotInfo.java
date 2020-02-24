@@ -450,7 +450,7 @@ public class ParkingLotInfo implements Comparable<ParkingLotInfo>{
 
         return Comparator.comparing(ParkingLotInfo::getQueStatusOrder)
                 .thenComparing(ParkingLotInfo::getPayYnOrder)
-               .thenComparingDouble(ParkingLotInfo::getRatePerMinutes)
+                .thenComparingDouble(ParkingLotInfo::getRatePerMinutes)
                 .compare(this, o);
 
 
