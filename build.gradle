@@ -73,9 +73,15 @@ test {
 }
 
 
+/*
+
 // npm install 과정
 task appNpmInstall(type: NpmTask) {
 	workingDir = file("${project.projectDir}/frontend")
 	args = ["install"]
 }
+
+
 compileJava.dependsOn(appNpmInstall)
+ */
+
