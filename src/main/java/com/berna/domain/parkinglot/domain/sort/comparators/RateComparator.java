@@ -1,4 +1,4 @@
-package com.berna.domain.parkinglot.domain.comparators;
+package com.berna.domain.parkinglot.domain.sort.comparators;
 
 import com.berna.domain.parkinglot.domain.dto.ParkingLotInfo;
 

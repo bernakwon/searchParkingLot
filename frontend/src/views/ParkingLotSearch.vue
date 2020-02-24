@@ -1,24 +1,27 @@
 <template>
     <div class="main">
-        <h2 class="title">{{title}}
+        <h2 class="title">{{title}}  <i class="fas fa-sync" style="cursor: pointer" @click="refreshCache=true"></i>
         </h2>
         <div>
             <div id="searchbox">
+                <div style="float: left">
                 <button type="button" @click="switchSearchNearFlag"
-                        :style="clickSearchNearCheck?'color:orange':'color:black'">가까운 곳 찾기
+                        :style="clickSearchNearCheck?'color:orange':'color:black'">가까운 곳 찾기{{myLat}}{{myLng}}
                 </button>
+                </div>
                 <input type="text" id="searchAddr" name="searchAddr" placeholder="주소 검색" v-model="addr">
                 <input type="text" id="searchTel" name="searchTel" placeholder="전화번호 검색" v-model="tel">
                 <input type="text" id="searchParkingName" name="searchParkingName" placeholder="주차장 검색"
                        v-model="parkingName">
                 <button type="button" id="searchBtn" @click="getParkingListData">조회</button>
-                <button type="button" id="" @click="refreshCache=true">새로고침</button>
+
             </div>
             <div>
                 <table class="table_width">
                     <colgroup>
                         <col width="15%">
                         <col width="20%">
+                        <col width="15%">
                         <col width="15%">
                         <col width="15%">
                         <col width="15%">
@@ -33,6 +36,7 @@
                     <th scope="row">유무료구분</th>
                     <th scope="row">요금(분)</th>
                     <th scope="row" @click=""></th> <!--가능여부-->
+                    <th></th>
                     </thead>
                     <tbody>
                     <tr v-for="p in parkingListData">
@@ -43,7 +47,9 @@
                         <td>{{p.PAY_NM}}</td>
                         <td>{{p.RATES}}({{p.TIME_RATE}})</td>
                         <td>{{p.currentParkingCheck?'O':'X'}}</td>
+                        <td>{{computeDistance(p.LAT,p.LNG ,myLat,myLng) }}</td>
                     </tr>
+                    <tr v-if="parkingTotCount===1"><td colspan="7" style="text-align: center">데이터가 없습니다.</td></tr>
                     </tbody>
 
                 </table>
@@ -51,6 +57,7 @@
                 <vue-ads-pagination
                         :total-items="parkingTotCount"
                         :page="pageNo"
+                        :items-per-page="pageSize"
 
                 >
                     <template
@@ -89,6 +96,8 @@
         },
         created() {
             document.title = this.title
+          //처음 api 캐싱
+
             this.getParkingListData()
         },
         data() {
@@ -102,7 +111,7 @@
                 searchText: '',
                 searchCurrentCheck: true,
                 pageNo: 0,
-                pageSize: 10,
+                pageSize: 15,
                 loading: false,
                 start: 0,
                 end: 0,
@@ -118,31 +127,55 @@
                 this.getParkingListData()
             },
             refreshCache(){
-                const vm = this
-                vm.start = 0
-                vm.end = 10
-                vm.pageNo = 0
+
+                this.initSearchForm()
                 this.getParkingListData()
             },
             clickSearchNearCheck() {
-                const vm = this
+              const vm = this
                 if (vm.clickSearchNearCheck) {
                     vm.clickSearchNearLocation()
 
                 } else {
-                    vm.myLat = 0
-                    vm.myLng = 0
+                  vm.myLat = 0
+                  vm.myLng = 0
                 }
+               setTimeout(function () {
+                 vm.initSearchForm()
+                 vm.getParkingListData()
+               },200)
 
-                    vm.start = 0
-                    vm.end = 10
-                    vm.pageNo =0
-                this.getParkingListData()
 
             }
         },
         computed: {},
         methods: {
+          computeDistance:function(startCoordslat,startCoordslng,destCoordslat,destCoordslng){
+            console.log(startCoordslat,startCoordslng,destCoordslat,destCoordslng)
+      let startLatRads = this.degreesToRadians(startCoordslat);
+      let startLongRads = this.degreesToRadians(startCoordslng);
+      let destLatRads =this.degreesToRadians(destCoordslat);
+      let destLongRads = this.degreesToRadians(destCoordslng);
+
+      let Radius = 60 * 1.1515; //지구의 반경(km)
+      let distance = Math.acos(Math.sin(startLatRads) * Math.sin(destLatRads) +
+          Math.cos(startLatRads) * Math.cos(destLatRads) *
+          Math.cos(startLongRads - destLongRads)) * Radius;
+
+      return distance;
+    }
+,
+     degreesToRadians :function(degrees){
+       return (degrees * Math.PI)/180;
+
+    },
+          initSearchForm:function(){
+            const vm = this
+
+            vm.start = 0
+            vm.end = 15
+            vm.pageNo =0
+            },
             switchSearchNearFlag: function () {
                 this.clickSearchNearCheck = !this.clickSearchNearCheck
             },
@@ -168,6 +201,8 @@
             getParkingListData: function () {
 
                 const vm = this
+
+
                 vm.$Progress.start()
                 ApiUtil.post('/parking/cache/search', {
                     pageNo: vm.pageNo,
@@ -180,7 +215,7 @@
                     parkingName: vm.parkingName,
                     myLat: vm.myLat,
                     myLng: vm.myLng,
-                    refreshCache: vm.refreshCache,
+                    refreshCache: vm.refreshDate===''?true:vm.refreshCache,
                     refreshDate: vm.refreshDate
                 }).then(response => {
                     if (response.message === undefined) {

@@ -69,15 +69,15 @@ public class CacheService {
         List<ParkingLotInfo> resultParkingLotInfo = new ArrayList<>();
         List<CodeMessageInfo> codeMessageInfos = new ArrayList<>();
         //get Total Count
-        long listTotCnt = getTotalCount();
+        int listTotCnt = getTotalCount();
 
-        IntStream.range(0, Math.round(listTotCnt / MAX_END_INDEX)).forEach(idx -> {
+        IntStream.range(0,  Math.round(listTotCnt / MAX_END_INDEX)+1).forEach(idx -> {
             int startIndex = MAX_END_INDEX * idx + 1;
             int endIndex = MAX_END_INDEX * idx + MAX_END_INDEX;
 
             ApiResult result = apiCallByWebClient(startIndex, endIndex);
 
-            if (result != null) {
+            if (nonNull(result)) {
                 codeMessageInfos.add(result.getGetParkInfo().getResult());
                 resultParkingLotInfo.addAll(result.getGetParkInfo().getRow());
             }
@@ -112,8 +112,8 @@ public class CacheService {
      * @author hrkwon
      * @Description 전체 목록 수
      */
-    private long getTotalCount() {
-        long listTotCnt = 0;
+    private int getTotalCount() {
+        int listTotCnt = 0;
         ApiResult resultTotal = apiCallByWebClient(1, 1);
         if (nonNull(resultTotal)) {
             CodeMessageInfo errorCheckMessage = resultTotal.getGetParkInfo().getResult();

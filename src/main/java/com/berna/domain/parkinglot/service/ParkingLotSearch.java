@@ -1,20 +1,21 @@
 package com.berna.domain.parkinglot.service;
 
+import com.berna.cache.service.CacheService;
 import com.berna.domain.parkinglot.domain.dto.ParkingLotInfo;
-
 import com.berna.domain.parkinglot.domain.request.ParkingLotRequestParam;
 import com.berna.domain.parkinglot.domain.response.ParkingLotInfoListResponse;
+import com.berna.domain.parkinglot.domain.sort.comparators.DistanceComparator;
+import com.berna.domain.parkinglot.domain.sort.sort.MergeSorter;
 import com.berna.global.common.util.CommonUtil;
-import com.berna.cache.service.CacheService;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
@@ -29,123 +30,56 @@ public class ParkingLotSearch {
     @ApiOperation(value = "주차장 정보 list 조회 Service", notes = "검색조건과 페이징 index를 가지고 캐시된 목록을 조회한다.")
     public ParkingLotInfoListResponse searchCacheDataByApi(ParkingLotRequestParam parkingLotRequestParam) {
         String refreshKey = parkingLotRequestParam.getRefreshDate();
-        if(parkingLotRequestParam.isRefreshCache()){
-            refreshKey = LocalDateTime.now().toString();
-        }
+        if(parkingLotRequestParam.isRefreshCache()) refreshKey = LocalDateTime.now().toString();
+
         ParkingLotInfoListResponse allParkingLotDataMap = cacheService.getParkingLotInfoOpenAPI(refreshKey);
+
         List<ParkingLotInfo> allParkingLotDataList = allParkingLotDataMap.getParkingLotInfoList();
-        long totalCount = allParkingLotDataMap.getTotalCount();
 
 
-        List<ParkingLotInfo> filterList = new ArrayList<>();
+        List<ParkingLotInfo> filterList =filterListBySearchParam(allParkingLotDataList,parkingLotRequestParam);
+        long totalCount = filterList.size();
 
-        filterList = allParkingLotDataList.stream().filter(parkingLotInfo -> {
+        if (parkingLotRequestParam.isSearchNearCheck()) {
+            double myLat = parkingLotRequestParam.getMyLat();
+            double myLng = parkingLotRequestParam.getMyLng();
+            MergeSorter.sort(filterList,new DistanceComparator(myLat,myLng));
+           }else Collections.sort(filterList);
+
+        //페이징
+        int startIndex = parkingLotRequestParam.getStart();
+        int endIndex = parkingLotRequestParam.getEnd();
+
+        List<ParkingLotInfo> resultParkingLotDataList = settingPagingList(filterList, startIndex, endIndex);
+
+        return new ParkingLotInfoListResponse(totalCount, resultParkingLotDataList, refreshKey);
+    }
+
+
+
+    private List<ParkingLotInfo> settingPagingList(List<ParkingLotInfo> targetList, int startIndex, int endIndex) {
+        if (targetList.size() == 0) startIndex = targetList.size();
+        if (targetList.size() <= endIndex) endIndex = targetList.size();
+
+        return targetList.subList(startIndex, endIndex);
+    }
+
+    private List<ParkingLotInfo> filterListBySearchParam(List<ParkingLotInfo> allParkingLotDataList, ParkingLotRequestParam searchParam) {
+        return allParkingLotDataList.stream().filter(parkingLotInfo -> {
             boolean searchAddr = true;
             boolean searchTel = true;
             boolean searchParkingName = true;
-            if (nonNull(parkingLotRequestParam.getAddr())) {
-                searchAddr = parkingLotInfo.getAddr().contains(parkingLotRequestParam.getAddr());
+            if (!("").equals(searchParam.getAddr())) {
+                searchAddr = parkingLotInfo.getAddr().contains(searchParam.getAddr());
             }
-            if (nonNull(parkingLotRequestParam.getTel())) {
-                searchTel = parkingLotInfo.getTel().contains(parkingLotRequestParam.getTel());
+            if (!("").equals(searchParam.getTel())) {
+                searchTel = parkingLotInfo.getTel().contains(searchParam.getTel());
             }
-            if (nonNull(parkingLotRequestParam.getParkingName())) {
-                searchParkingName = parkingLotInfo.getParkingName().contains(parkingLotRequestParam.getParkingName());
+            if (!("").equals(searchParam.getAddr())) {
+                searchParkingName = parkingLotInfo.getParkingName().contains(searchParam.getParkingName());
             }
             return searchAddr && searchTel && searchParkingName;
         }).collect(Collectors.toList());
-
-        if(parkingLotRequestParam.isSearchNearCheck()){
-        double myLat = parkingLotRequestParam.getMyLat();
-        double myLng = parkingLotRequestParam.getMyLng();
-
-            Comparator<ParkingLotInfo> distanceComparator = (o1, o2) -> {
-                double o1Distance = CommonUtil.distance(myLat, o1.getLat(), myLng, o1.getLng());
-                double o2Distance = CommonUtil.distance(myLat, o2.getLat(), myLng, o2.getLng());
-                return Double.compare(o1Distance, o2Distance);
-            };
-            Collections.sort(filterList, distanceComparator);
-
-        } else Collections.sort(filterList);
-
-
-        //페이징
-        List<ParkingLotInfo> resultParkingLotDataList;
-        int startindex = parkingLotRequestParam.getStart();
-        int endIndex = parkingLotRequestParam.getEnd();
-
-        if (filterList.size() == 0) {
-            startindex = filterList.size();
-        }
-        if (filterList.size() <= endIndex) {
-            endIndex = filterList.size();
-        }
-
-
-        resultParkingLotDataList = filterList.subList(parkingLotRequestParam.getStart(), endIndex);
-
-        return new ParkingLotInfoListResponse(filterList.size(), resultParkingLotDataList,refreshKey);
     }
 
-
-
-    /**
-     * searchText 하나만 받아 처리 3개의 조건중 하나만 성립해도 검색됨
-
-    @ApiOperation(value = "주차장 정보 list 조회 Service 두번째", notes = "검색조건을 분리하지 않고 3개의 조건 중 부합하는 목록을 조회한다.")
-    public ParkingLotInfoListResponse searchCacheDataByApi2(ParkingLotRequestParam parkingLotRequestParam) {
-
-        ParkingLotInfoListResponse aallParkingLotDataMap = cacheService.getParkingLotInfoOpenAPI();
-        List<ParkingLotInfo> allParkingLotDataList = aallParkingLotDataMap.getParkingLotInfoList();
-        long totalCount = aallParkingLotDataMap.getTotalCount();
-
-
-        List<ParkingLotInfo> filterList = new ArrayList<>();
-        if (nonNull(parkingLotRequestParam.getSearchText())) {
-            allParkingLotDataList = allParkingLotDataList.stream().filter(parkingLotInfo -> {
-
-                boolean searchAddr = parkingLotInfo.getAddr().contains(parkingLotRequestParam.getSearchText());
-
-                boolean searchTel = parkingLotInfo.getTel().contains(parkingLotRequestParam.getSearchText());
-
-                boolean searchParkingName = parkingLotInfo.getParkingName().contains(parkingLotRequestParam.getSearchText());
-
-                return searchAddr || searchTel || searchParkingName;
-
-
-            }).collect(Collectors.toList());
-        }
-
-        double myLat = parkingLotRequestParam.getMyLat();
-        double myLng = parkingLotRequestParam.getMyLng();
-
-        if (myLat != 0.0 && myLng != 0.0) {
-
-            Comparator<ParkingLotInfo> distanceComparator = new Comparator<ParkingLotInfo>() {
-                @Override
-                public int compare(ParkingLotInfo o1, ParkingLotInfo o2) {
-                    double o1Distance = CommonUtil.distance(myLat, o1.getLat(), myLng, o1.getLng());
-                    double o2Distance = CommonUtil.distance(myLat, o2.getLat(), myLng, o2.getLng());
-                    return Double.compare(o1Distance, o2Distance);
-                }
-
-            };
-            Collections.sort(filterList, distanceComparator);
-
-        } else Collections.sort(filterList);
-
-        //페이징
-        List<ParkingLotInfo> resultParkingLotDataList = new ArrayList<>();
-
-        int endIndex = parkingLotRequestParam.getEnd();
-        if (filterList.size() <= endIndex) {
-            endIndex = filterList.size();
-        }
-
-
-        resultParkingLotDataList = filterList.subList(parkingLotRequestParam.getStart(), endIndex);
-
-        return new ParkingLotInfoListResponse(totalCount, resultParkingLotDataList);
-    }
-     */
 }

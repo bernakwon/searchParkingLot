@@ -1,12 +1,14 @@
 package com.berna.domain.parkinglot.domain.request;
 
 
-import com.berna.global.common.object.PagingParam;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 /**
  * @author hrkwon
@@ -117,6 +119,5 @@ public class ParkingLotRequestParam {
             hidden = false
     )
     String refreshDate;
-
 
 }
