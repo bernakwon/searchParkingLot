@@ -13,7 +13,7 @@ Vue.use(VueAdsPagination)
 Vue.use(VueAdsPageButton)
 Vue.config.productionTip = false
 Vue.use(VueProgressBar)
-/* eslint-disable no-new */
+
 new Vue({
   el: '#app',
   router,
