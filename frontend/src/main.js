@@ -5,10 +5,7 @@ import {router} from './routes/index.js' // vue-router
 import {store} from './store/index.js' // vuex
 import '../node_modules/@fortawesome/fontawesome-free/css/all.css';
 import '../node_modules/vue-ads-pagination/dist/vue-ads-pagination.css';
-/*from './api/api.util' // Etners API Util
-import VeeValid
-import ApiUtil ate from 'vee-validate' // validation library
-*/
+
 
 
 import VueAdsPagination, { VueAdsPageButton } from 'vue-ads-pagination';
