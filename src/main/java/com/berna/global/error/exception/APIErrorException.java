@@ -2,7 +2,7 @@ package com.berna.global.error.exception;
 
 @SuppressWarnings("serial")
 public class APIErrorException extends RuntimeException {
-	public APIErrorException(String message) {
-        super(message);
+	public APIErrorException() {
+        super("API CALL FAIL");
     }
 }

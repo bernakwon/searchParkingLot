@@ -29,11 +29,7 @@ public enum ParkingSorterType {
             double o2Distance = CommonUtil.distance(myLat, p2.getLat(), myLng, p2.getLng());
             return Double.compare(o1Distance, o2Distance);
         });
-    }),
-    CURRENT_PARKING_CHECK("currentParkingCheck", (arr, param) -> {
-        arr.sort((p1, p2) -> Boolean.compare(p1.isCurrentParkingCheck(), p2.isCurrentParkingCheck()));
     });
-
 
     private final String description;
     private final ParkingSorter<ParkingLotInfo, ParkingLotRequestParam> sortFunc;

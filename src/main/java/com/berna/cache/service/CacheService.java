@@ -34,7 +34,7 @@ import static java.util.Objects.nonNull;
 @Service
 public class CacheService {
 
-    private final WebClient webClient;
+    private WebClient webClient;
 
     @Value("${open-api.base-url}")
     private String baseUrl;
@@ -55,6 +55,10 @@ public class CacheService {
         this.webClient = webClient.baseUrl(baseUrl)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .build();
+    }
+
+    public CacheService() {
+
     }
 
     /**
@@ -78,19 +82,9 @@ public class CacheService {
             ApiResult result = apiCallByWebClient(startIndex, endIndex);
 
             if (nonNull(result)) {
-                codeMessageInfos.add(result.getGetParkInfo().getResult());
                 resultParkingLotInfo.addAll(result.getGetParkInfo().getRow());
             }
         });
-
-
-        // 처리 결과가 성공이 아닌 경우 APIErrorException 발생
-        String errorMessage = "";
-        codeMessageInfos.stream().filter(codeMessageInfo -> !codeMessageInfo.getCode().equals(SUCCESS_API_RESULT_CODE))
-                .forEach(apiError -> errorMessage.join(apiError.getCode()));
-        if (!errorMessage.equals("")) {
-            throw new APIErrorException(errorMessage);
-        }
 
 
         return new ParkingLotInfoListResponse(listTotCnt, resultParkingLotInfo ,refreshDate);
@@ -102,10 +96,26 @@ public class CacheService {
      */
     private ApiResult apiCallByWebClient(int startIndex, int endIndex) {
         String apiUrl = baseUrl + key + type + serviceName + "/" + startIndex + "/" + endIndex;
-        return webClient.get().uri(apiUrl)
+        ApiResult result =  webClient.get().uri(apiUrl)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .retrieve().bodyToMono(ApiResult.class).block();
 
+        // Error 처리
+        if (nonNull(result)) {
+            if(nonNull(result.getGetParkInfo())) {
+                CodeMessageInfo errorCheckMessage = result.getGetParkInfo().getResult();
+                if (!errorCheckMessage.getCode().equals(SUCCESS_API_RESULT_CODE)) {//처리 결과 성공이 아니면 APIErrorException 호출
+                    log.debug(errorCheckMessage.getMessage());
+                    throw new APIErrorException();
+                }
+            } else {
+                throw new APIErrorException();
+            }
+        }else{
+            throw new APIErrorException();
+        }
+
+        return result;
     }
 
     /**
@@ -113,16 +123,9 @@ public class CacheService {
      * @Description 전체 목록 수
      */
     private int getTotalCount() {
-        int listTotCnt = 0;
         ApiResult resultTotal = apiCallByWebClient(1, 1);
-        if (nonNull(resultTotal)) {
-            CodeMessageInfo errorCheckMessage = resultTotal.getGetParkInfo().getResult();
-            if (!errorCheckMessage.getCode().equals(SUCCESS_API_RESULT_CODE)) {//처리 결과 성공이 아니면 APIErrorException 호출
-                throw new APIErrorException(errorCheckMessage.getMessage());
-            }
-        }
-        listTotCnt = resultTotal.getGetParkInfo().getListTotalCount();
-        return listTotCnt;
+
+        return resultTotal.getGetParkInfo().getListTotalCount();
     }
 
 }

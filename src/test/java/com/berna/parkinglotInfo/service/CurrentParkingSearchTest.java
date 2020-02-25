@@ -4,22 +4,26 @@ import com.berna.domain.parkinglot.domain.dto.ParkingLotInfo;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 //@RunWith(MockitoJUnitRunner.Silent.class)
 public class CurrentParkingSearchTest {
 
     private static ParkingLotInfo parkingLotInfo;
-
+    @Mock
+    private Clock clock;
+    private Clock fixedClock;
 
   //  @Before
     public void setUp(){
@@ -35,17 +39,21 @@ public class CurrentParkingSearchTest {
 
 
 
-
     }
 
 
 
 
-   // @Test
+    @Test
     public void 현재_주차여부_계산_테스트_평일_가능(){
-        when(LocalDate.now()).thenReturn(LocalDate.of(2020,2,15));
-        when(LocalTime.now()).thenReturn(LocalTime.of(10,00,00));
-        assertEquals(true,parkingLotInfo.isCurrentParkingCheck());
+
+        MockitoAnnotations.initMocks(this);
+
+        //tell your tests to return the specified LOCAL_DATE when calling LocalDate.now(clock)
+        fixedClock = Clock.fixed(LocalDate.of(2020,2,15).atStartOfDay(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
+
+
+        assertTrue(parkingLotInfo.isCurrentParkingCheck());
 
 
     }
@@ -54,7 +62,9 @@ public class CurrentParkingSearchTest {
 
   //  @Test
     public void 현재_주차여부_계산_테스트_평일_불가(){
-
+        fixedClock = Clock.fixed(LocalDate.of(2020,2,15).atStartOfDay(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
+        doReturn(fixedClock.instant()).when(clock).instant();
+        doReturn(fixedClock.getZone()).when(clock).getZone();
         given(LocalDate.now()).willReturn(LocalDate.of(2020,2,15));
         given(LocalTime.now()).willReturn(LocalTime.of(20,00,00));
         assertEquals(LocalTime.now().getHour(),"20");

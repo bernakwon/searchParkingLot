@@ -28,13 +28,6 @@
 
                 </div>
 
-                <div class="main_right">
-                    <button type="button" class="searchBtn" :style="clickSortCurrentCheck?'color:orange':'color:black;'"
-                            style="float:right;'"
-                            @click="switchSortCurrentFlag">주차 가능 순으로 정렬
-                    </button>
-
-                </div>
             </div>
             <div>
                 <table class="table_width">
@@ -129,7 +122,6 @@
         addr: '',
         tel: '',
         parkingName: '',
-        searchCurrentCheck: true,
         pageNo: 0,
         pageSize: 15,
         loading: true,
@@ -138,7 +130,6 @@
         myLat: 0,
         myLng: 0,
         clickSortNearCheck: false,
-        clickSortCurrentCheck: false,
         sortDescription: 'default',
         refreshCache: true,
         refreshDate: ''
@@ -153,24 +144,15 @@
         this.initPageNo()
         this.getParkingListData()
       },
-      clickSortCurrentCheck() {
-        const vm = this
-        if (vm.clickSortCurrentCheck) {
-          vm.sortDescription = 'currentParkingCheck'
-        } else {
-          vm.sortDescription = 'default'
-        }
-        setTimeout(function () {
-          vm.initPageNo()
-          vm.getParkingListData()
-        }, 100)
-      },
       clickSortNearCheck() {
         const vm = this
         if (vm.clickSortNearCheck) {
+          vm.sortDescription = "distance"
           vm.clickSearchNearLocation()
 
         } else {
+
+          vm.sortDescription = 'default'
           vm.myLat = 0
           vm.myLng = 0
         }
@@ -191,12 +173,9 @@
       switchSearchNearFlag: function () {
         this.clickSortNearCheck = !this.clickSortNearCheck
       },
-      switchSortCurrentFlag: function () {
-        this.clickSortCurrentCheck = !this.clickSortCurrentCheck
-      },
       clickSearchNearLocation: function () {
         const vm = this
-        vm.sortDescription = "distance"
+
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(function (position) {
             vm.myLat = position.coords.latitude
@@ -218,7 +197,7 @@
 
         const vm = this
 
-
+        vm.parkingListData =[]
         vm.$Progress.start()
         ApiUtil.post('/parking/cache/search', {
           pageNo: vm.pageNo,
@@ -319,15 +298,9 @@
 
     .main_common {
         display: inline-block;
-        width: 50%;
+        width: 70%;
 
     }
 
-    .main_right {
-
-        display: inline-block;
-        width: 20%;
-
-    }
 
 </style>

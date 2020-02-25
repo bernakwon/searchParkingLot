@@ -42,6 +42,7 @@ public class CacheServiceTest {
     private static ApiResult API_DATA;
     List<ParkingLotInfo> testList;
     private static final String SUCCESS_API_RESULT_CODE = "INFO-000";
+    private static final String FAIL_API_RESULT_CODE = "INFO-100";
 
     @Mock
     private CacheService cacheService;
@@ -62,14 +63,13 @@ public class CacheServiceTest {
 
 
         CodeMessageInfo codeMessageInfo = new CodeMessageInfo(SUCCESS_API_RESULT_CODE,"정상적으로 리턴되었습니다.");
+        CodeMessageInfo codeMessageInfoError = new CodeMessageInfo(FAIL_API_RESULT_CODE,"인증키가 유효하지 않습니다.");
+
 
         GetParkInfo resultAllGetParkInfo = new GetParkInfo(150,codeMessageInfo,testList);
 
-        this.API_DATA = new ApiResult(resultAllGetParkInfo);
-/*
+        API_DATA = new ApiResult(resultAllGetParkInfo);
 
-        when(cacheService.callWebClient(1,1)).thenReturn(API_DATA);
-        when(cacheService.callWebClient(1,1000)).thenReturn(API_DATA);*/
 
     }
 

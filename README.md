@@ -3,9 +3,8 @@ programed By hrkwon
 ==================================
 ## Spec
 - Springboot
-- Spring data Jpa
+- Spring Cache
 - lombok
-- H2-database
 - thymeleaf(View리턴에만 사용함)
 - Vue.js
 - webflux (WebClient로 OpenAPI 호출)
@@ -31,14 +30,16 @@ IDE Open -> File -> Open -> SearchParkingLot
 #### Encoding
     - project->properties->resource에서 text file encoding을 UTF-8로 변경한다.
 
-#### nodejs 설치 후 npm i 
+#### Front build 설정
 
+node.js 가 설치된 경우 build.gradle의 node 설정을 true로 변경하거나 아래의 url에서 다운로드 설치
 https://nodejs.org/dist/v12.16.1/node-v12.16.1-x64.msi 
 
 
 #### Run
     - Run->Run As ->Spring Boot App
     - 포트 설정을 7070으로 해두었기때문에 localhost:7070으로 접속해야한다.
+    - FrontEnd를 따로 실행하고 싶을때는 ./frontend 위치에서 npm run serve 명령어를 실행
 --------------------------------------------
 ## 요구사항과 개발전략
 
@@ -57,7 +58,7 @@ https://nodejs.org/dist/v12.16.1/node-v12.16.1-x64.msi
 　　 
 -------------------------------------------
 
-  #### DB
+  #### DTO
   
       서울시 공영주차장 정보(parking_lot_info)
      
@@ -90,7 +91,7 @@ https://nodejs.org/dist/v12.16.1/node-v12.16.1-x64.msi
   
   	1. 요구사항1 :  검색조건 3가지 충족 ( 구/동, 전화번호, 주차장명)
 
-  	2. 요구사항2 :  배치를 통해 수집한 데이터로 자유로운 페이징( 기존 API는 1000개 이상 페이징 불가 )
+  	2. 요구사항2 :  캐시를 통해 수집한 데이터로 자유로운 페이징( 기존 API는 1000개 이상 페이징 불가 )
   	               Sorting 가능 ( 기존 API Sorting 불가 )
   	               현재 주차여부 표시
 
@@ -98,18 +99,17 @@ https://nodejs.org/dist/v12.16.1/node-v12.16.1-x64.msi
 
   	4. 요구사항4 :  Swagger로 api document 자동화
   	
-  	5. 우대사항1 :  Kakao Map 을 사용하여 현재 위치에서 가까운 정보 조회 
+  	5. 우대사항1 :  현재 위치에서 가까운 정보 조회 
   	
   	6. 우대사항2 :  Frontend를 vue-cli 로 구성, Gradle Build 시 함께 빌드, 단일 페이지로 구성
   	
-  	7. 우대사항3 :  containerize - Frontend Dev Server와 Backend를 별도로 실행해도 동작가능하도록 구성
+  	7. 우대사항3 :  containerize - Frontend Dev Server와 Backend를 별도로 실행해도 동작가능하도록 구성 (vue.config.js의 devProxy 참조)
   	
   	8. 기타      :  에러처리 - @ExcepionHandler와 @ControllerAdvice를 이용하여 에러정보를 리턴
    
 ---------------------------------------------  
 
    #### 테스트 전략
-    Backend
    
     1. 단위테스트 : 검색조건과 페이징 조건에 따라 목록 리턴의 성공여부, 정렬조건에 따른 정렬 성공 여부
   	
@@ -117,8 +117,7 @@ https://nodejs.org/dist/v12.16.1/node-v12.16.1-x64.msi
   	
   	3. API 호출테스트 : API 호출 성공여부와 원하는 데이터로의 매핑이 성공적인지 여부
   	
-  	Frontend
-       
-     vue test
+ 
+
   
 

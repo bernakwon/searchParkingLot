@@ -2,12 +2,9 @@ package com.berna.webclient;
 
 import com.berna.cache.domain.ApiResult;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.web.reactive.function.client.WebClient;
 
 @WebFluxTest
 public class WebClientCallTest {
