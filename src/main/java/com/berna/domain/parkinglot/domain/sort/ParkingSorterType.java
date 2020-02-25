@@ -31,7 +31,7 @@ public enum ParkingSorterType {
         });
     }),
     CURRENT_PARKING_CHECK("currentParkingCheck", (arr, param) -> {
-        arr.sort((p1, p2) -> Boolean.compare(p2.isCurrentParkingCheck(), p1.isCurrentParkingCheck()));
+        arr.sort((p1, p2) -> Boolean.compare(p1.isCurrentParkingCheck(), p2.isCurrentParkingCheck()));
     });
 
 

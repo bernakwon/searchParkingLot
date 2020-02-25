@@ -11,86 +11,93 @@
                 </div>
                 <div class="main_common">
                     <div style="display:inline-block">
-                    <label for="searchAddr"></label><input type="text" id="searchAddr" name="searchAddr" placeholder="주소 검색" v-model="addr" @change="getParkingListData"/>
-                    <label for="searchTel"></label><input type="text" id="searchTel" name="searchTel" placeholder="전화번호 검색" v-model="tel" @change="getParkingListData"/>
-                    <label for="searchParkingName"></label><input type="text" id="searchParkingName" name="searchParkingName" placeholder="주차장 검색"
-                                                                  v-model="parkingName" @change="getParkingListData"/>
+                        <label for="searchAddr"></label><input type="text" id="searchAddr" name="searchAddr"
+                                                               placeholder="주소 검색" v-model="addr"
+                                                               @change="getParkingListData"/>
+                        <label for="searchTel"></label><input type="text" id="searchTel" name="searchTel"
+                                                              placeholder="전화번호 검색" v-model="tel"
+                                                              @change="getParkingListData"/>
+                        <label for="searchParkingName"></label><input type="text" id="searchParkingName"
+                                                                      name="searchParkingName" placeholder="주차장 검색"
+                                                                      v-model="parkingName"
+                                                                      @change="getParkingListData"/>
                     </div>
                     <div style="display:inline-block">
                         <button type="button" class="searchBtn" id="searchBtn" @click="getParkingListData">조회</button>
                     </div>
 
-               </div>
+                </div>
 
                 <div class="main_right">
-                    <button type="button" class="searchBtn"  :style="clickSortCurrentCheck?'color:orange':'color:black;'" style="float:right;'"
+                    <button type="button" class="searchBtn" :style="clickSortCurrentCheck?'color:orange':'color:black;'"
+                            style="float:right;'"
                             @click="switchSortCurrentFlag">주차 가능 순으로 정렬
                     </button>
 
                 </div>
             </div>
-                <div>
-                    <table class="table_width">
-                        <colgroup>
-                            <col width="15%">
-                            <col width="20%">
-                            <col width="15%">
-                            <col width="15%">
-                            <col width="15%">
-                            <col width="15%">
-                            <col width="15%">
-                            <col width="15%">
-                        </colgroup>
-                        <thead>
-                        <th scope="row">주차장명</th>
-                        <th scope="row">주소</th>
-                        <th scope="row">전화번호</th>
-                        <th scope="row">주차 가능 차량 수</th>
-                        <th scope="row">유무료구분</th>
-                        <th scope="row">요금(분)</th>
-                        <th scope="row"></th> <!--가능여부-->
-                        </thead>
-                        <tbody>
-                        <tr v-for="p in parkingListData">
-                            <td>{{p.PARKING_NAME}}</td>
-                            <td>{{p.ADDR}}</td>
-                            <td>{{p.TEL}}</td>
-                            <td>{{p.CAPACITY}}</td>
-                            <td>{{p.PAY_NM}}</td>
-                            <td>{{p.RATES}}({{p.TIME_RATE}})</td>
-                            <td>{{p.currentParkingCheck?'O':'X'}}</td>
-                        </tr>
-                        <tr v-if="parkingTotCount===1">
-                            <td colspan="7" style="text-align: center">데이터가 없습니다.</td>
-                        </tr>
-                        </tbody>
+            <div>
+                <table class="table_width">
+                    <colgroup>
+                        <col width="15%">
+                        <col width="20%">
+                        <col width="15%">
+                        <col width="15%">
+                        <col width="15%">
+                        <col width="15%">
+                        <col width="15%">
+                        <col width="15%">
+                    </colgroup>
+                    <thead>
+                    <th scope="row">주차장명</th>
+                    <th scope="row">주소</th>
+                    <th scope="row">전화번호</th>
+                    <th scope="row">주차 가능 차량 수</th>
+                    <th scope="row">유무료구분</th>
+                    <th scope="row">요금(분)</th>
+                    <th scope="row"></th> <!--가능여부-->
+                    </thead>
+                    <tbody>
+                    <tr v-for="p in parkingListData">
+                        <td>{{p.PARKING_NAME}}</td>
+                        <td>{{p.ADDR}}</td>
+                        <td>{{p.TEL}}</td>
+                        <td>{{p.CAPACITY}}</td>
+                        <td>{{p.PAY_NM}}</td>
+                        <td>{{p.RATES}}({{p.TIME_RATE}})</td>
+                        <td>{{p.currentParkingCheck?'O':'X'}}</td>
+                    </tr>
+                    <tr v-if="parkingTotCount===1">
+                        <td colspan="7" style="text-align: center">데이터가 없습니다.</td>
+                    </tr>
+                    </tbody>
 
-                    </table>
+                </table>
 
-                    <vue-ads-pagination
-                            :total-items="parkingTotCount"
-                            :page="pageNo"
-                            :items-per-page="pageSize"
+                <vue-ads-pagination
+                        :total-items="parkingTotCount"
+                        :page="pageNo"
+                        :items-per-page="pageSize"
 
+                >
+                    <template
+                            slot="buttons"
+                            slot-scope="props"
                     >
-                        <template
-                                slot="buttons"
-                                slot-scope="props"
-                        >
-                            <vue-ads-page-button
-                                    v-for="(button, key) in props.buttons"
-                                    :key="key"
-                                    v-bind="button"
-                                    :class="{'bg-yellow-dark': button.active}"
-                                    @page-change="pageNo = button.page"
-                                    @range-change="start = button.start; end = button.end"
-                            />
-                        </template>
-                    </vue-ads-pagination>
+                        <vue-ads-page-button
+                                v-for="(button, key) in props.buttons"
+                                :key="key"
+                                v-bind="button"
+                                :class="{'bg-yellow-dark': button.active}"
+                                @page-change="pageNo = button.page"
+                                @range-change="start = button.start; end = button.end"
+                        />
+                    </template>
+                </vue-ads-pagination>
 
-                </div>
             </div>
         </div>
+    </div>
 
 </template>
 
@@ -150,7 +157,7 @@
         const vm = this
         if (vm.clickSortCurrentCheck) {
           vm.sortDescription = 'currentParkingCheck'
-        }else{
+        } else {
           vm.sortDescription = 'default'
         }
         setTimeout(function () {
@@ -303,18 +310,20 @@
     }
 
 
-    .main_left{
+    .main_left {
 
         display: inline-block;
         width: 30%;
 
     }
-    .main_common{
+
+    .main_common {
         display: inline-block;
         width: 50%;
 
     }
-    .main_right{
+
+    .main_right {
 
         display: inline-block;
         width: 20%;

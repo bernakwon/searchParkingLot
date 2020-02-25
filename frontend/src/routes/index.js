@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import HelloWorld from '@/components/HelloWorld'
-import Template from "../views/ParkingLotSearch"
+import ParkingLotSearch from "../views/ParkingLotSearch"
 
 Vue.use(VueRouter)
 
@@ -10,13 +10,8 @@ export const router = new VueRouter({
   routes: [
     {
       path: '/',
-      name: 'Template',
-      component: Template
-    },
-    {
-      path: '/hello',
-      name: 'Hello',
-      component: HelloWorld
-    },
+      name: 'ParkingLotSearch',
+      component: ParkingLotSearch
+    }
   ]
 })
