@@ -75,7 +75,7 @@ public class ParkingLotSearchPagingTest {
 
        //given
         when(cacheService.getParkingLotInfoOpenAPI(REFRESH_DATE)).thenReturn(API_DATA);
-        ParkingLotRequestParam testParkingLotParam =  ParkingLotRequestParam.builder().addr("압구정").tel("3").parkingName("공영").start(0).end(5).refreshCache(false).refreshDate(REFRESH_DATE).build();
+        ParkingLotRequestParam testParkingLotParam =  ParkingLotRequestParam.builder().sortDescription("default").addr("압구정").tel("3").parkingName("공영").start(0).end(5).refreshCache(false).refreshDate(REFRESH_DATE).build();
         List<ParkingLotInfo> returnData = API_DATA.getParkingLotInfoList();
         List<ParkingLotInfo> resultListParkingLotInfoList = Collections.singletonList(returnData.get(1));
         ParkingLotInfoListResponse resultParkingLotInfoResponse = new ParkingLotInfoListResponse(LIST_TOTAL_COUNT,resultListParkingLotInfoList,REFRESH_DATE);

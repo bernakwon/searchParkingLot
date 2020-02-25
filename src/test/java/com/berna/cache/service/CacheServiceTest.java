@@ -38,7 +38,7 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class CacheServiceTest {
 
-    private static String api_name = "API_ALL_DATA";
+    private static String API_NAME = "API_ALL_DATA";
     private static ApiResult API_DATA;
     List<ParkingLotInfo> testList;
     private static final String SUCCESS_API_RESULT_CODE = "INFO-000";

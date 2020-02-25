@@ -5,17 +5,16 @@ import com.berna.domain.parkinglot.domain.dto.ParkingLotInfo;
 import com.berna.domain.parkinglot.domain.request.ParkingLotRequestParam;
 import com.berna.domain.parkinglot.domain.response.ParkingLotInfoListResponse;
 import com.berna.domain.parkinglot.domain.sort.ParkingSorterType;
-import com.berna.domain.parkinglot.domain.sort.comparators.DistanceComparator;
-import com.berna.domain.parkinglot.domain.sort.sort.MergeSorter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static java.util.Objects.nonNull;
 
 @Api(value = "주차장 정보 로직")
 @Service
@@ -23,6 +22,7 @@ public class ParkingLotSearch {
 
     @Autowired
     CacheService cacheService;
+
 
     @ApiOperation(value = "주차장 정보 list 조회 Service", notes = "검색조건과 페이징 index를 가지고 캐시된 목록을 조회한다.")
     public ParkingLotInfoListResponse searchCacheDataByApi(ParkingLotRequestParam parkingLotRequestParam) {
@@ -60,13 +60,13 @@ public class ParkingLotSearch {
             boolean searchAddr = true;
             boolean searchTel = true;
             boolean searchParkingName = true;
-            if (!("").equals(searchParam.getAddr())) {
+            if (!("").equals(searchParam.getAddr())&&nonNull(searchParam.getAddr())) {
                 searchAddr = parkingLotInfo.getAddr().contains(searchParam.getAddr());
             }
-            if (!("").equals(searchParam.getTel())) {
+            if (!("").equals(searchParam.getTel())&&nonNull(searchParam.getTel())) {
                 searchTel = parkingLotInfo.getTel().contains(searchParam.getTel());
             }
-            if (!("").equals(searchParam.getAddr())) {
+            if (!("").equals(searchParam.getParkingName())&&nonNull(searchParam.getParkingName())) {
                 searchParkingName = parkingLotInfo.getParkingName().contains(searchParam.getParkingName());
             }
             return searchAddr && searchTel && searchParkingName;

@@ -101,6 +101,7 @@ public class ParkingLotRequestParam {
             hidden = false
     )
     boolean refreshCache;
+
     @ApiModelProperty(
             example = "",
             required = true,

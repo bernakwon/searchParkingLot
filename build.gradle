@@ -10,12 +10,7 @@ buildscript {
 		classpath("com.moowork.gradle:gradle-node-plugin:0.12")
 	}
 }
-/*
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'org.springframework.boot'
-apply plugin: 'io.spring.dependency-management'
-apply plugin: 'com.ewerk.gradle.plugins.querydsl'*/
+
 plugins {
 	id 'java'
 	id 'idea'
@@ -34,7 +29,7 @@ repositories {
 
 dependencies {
 
-	//compile('org.springframework.boot:spring-boot-starter-data-jpa')
+
 	compile('org.springframework.boot:spring-boot-starter-thymeleaf')
 
 	compile ('io.springfox:springfox-swagger2:2.6.1')
@@ -61,10 +56,15 @@ dependencies {
 	compile('com.ibm.icu:icu4j:62.1')
 
 	runtime('org.springframework.boot:spring-boot-devtools')
-	//runtime('com.h2database:h2')
+
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 
 	testCompile('io.projectreactor:reactor-test')
+
+	testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.0"){
+		exclude module:'junit-platform-commons'
+	}
+	testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.0")
 
 }
 
@@ -72,16 +72,22 @@ test {
 	useJUnitPlatform()
 }
 
+node{
+	//node.js가 설치되지 않은 환경에서는 true로 변경하고 build
+	download=false
+}
 
-/*
 
-// npm install 과정
 task appNpmInstall(type: NpmTask) {
 	workingDir = file("${project.projectDir}/frontend")
 	args = ["install"]
 }
 
+task appNpmBuild(type: NpmTask) {
+	workingDir = file("${project.projectDir}/frontend")
+	args = ["run","build"]
+}
 
 compileJava.dependsOn(appNpmInstall)
- */
 
+appNpmInstall.dependsOn(appNpmBuild)

@@ -10,32 +10,31 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Comparator;
 
+
+/**
+ * @author hrkwon
+ * @Description 정렬기준에 따른 Comparator를 정의한 enum class
+ */
+
 public enum ParkingSorterType {
 
     DEFAULT("default", (arr, param) ->{
-        Collections.sort(arr, null);
+        arr.sort(null);
     }),
     DISTANCE("distance", (arr, param) -> {
         double myLat = param.getMyLat();
         double myLng = param.getMyLng();
-        Collections.sort(arr, new Comparator<ParkingLotInfo>() {
-            @Override
-            public int compare(ParkingLotInfo p1, ParkingLotInfo p2) {
-                double o1Distance = CommonUtil.distance(myLat, p1.getLat(), myLng, p1.getLng());
-                double o2Distance = CommonUtil.distance(myLat, p2.getLat(), myLng, p2.getLng());
-                return Double.compare(o1Distance, o2Distance);
-            }
+        arr.sort((p1, p2) -> {
+            double o1Distance = CommonUtil.distance(myLat, p1.getLat(), myLng, p1.getLng());
+            double o2Distance = CommonUtil.distance(myLat, p2.getLat(), myLng, p2.getLng());
+            return Double.compare(o1Distance, o2Distance);
         });
     }),
     CURRENT_PARKING_CHECK("currentParkingCheck", (arr, param) -> {
-        Collections.sort(arr,new Comparator<ParkingLotInfo>() {
-            @Override
-            public int compare(ParkingLotInfo p1, ParkingLotInfo p2) {
-
-                return Boolean.compare(p2.isCurrentParkingCheck(),p1.isCurrentParkingCheck());
-            }
-        });
+        arr.sort((p1, p2) -> Boolean.compare(p2.isCurrentParkingCheck(), p1.isCurrentParkingCheck()));
     });
+
+
     private final String description;
     private final ParkingSorter<ParkingLotInfo, ParkingLotRequestParam> sortFunc;
 
